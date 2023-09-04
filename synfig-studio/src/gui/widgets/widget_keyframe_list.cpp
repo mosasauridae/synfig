@@ -43,6 +43,7 @@
 #include <gui/exception_guard.h>
 #include <gui/localization.h>
 //#include <synfig/general.h>
+#include <random>
 #endif
 
 /* === U S I N G =========================================================== */
@@ -133,18 +134,96 @@ Widget_Keyframe_List::draw_arrow(
 	const Cairo::RefPtr<Cairo::Context> &cr,
 	double x, double y,
 	double width, double height,
+        float alpha,
 	bool fill,
-	const Color &color )
+        bool select,
+        const std::pair<synfig::Color, synfig::Color> &colors )
 {
+	const synfig::Color& color1 = colors.first;
+	const synfig::Color& color2 = colors.second;
+	bool sameColor = color1==color2;
+
 	cr->save();
-	cr->set_source_rgba(color.get_r(), color.get_g(), color.get_b(), color.get_a());
-	cr->set_line_width(1.0);
-	cr->move_to(x, y);
-	cr->line_to(x - 0.5*width, y - height);
-	cr->line_to(x + 0.5*width, y - height);
-	cr->close_path();
-	if (fill) cr->fill(); else cr->stroke();
+
+	auto lineArrow = [&](const synfig::Color &c, double lineWidth, double xOffset, double yOffset, bool close)
+	{
+		cr->set_source_rgba(c.get_r(), c.get_g(), c.get_b(), alpha);
+		cr->set_line_width(lineWidth);
+		cr->move_to(x - xOffset*width, y - height*yOffset);
+		cr->line_to(x, y);
+		cr->line_to(x + xOffset*width, y - height*yOffset);
+		if (close)
+			cr->close_path();
+	};
+
+	lineArrow(color1, 1.5, 0.5, 1.0, true);
+	cr->stroke();
+
+	static const double d = sqrt(0.5);
+
+	if (!sameColor) {
+		lineArrow(color2, 1.5, 0.5*d, d, false);
+		cr->stroke();
+	}
+
+	if (fill) {
+		lineArrow(color1, 1.5, 0.5, 1.0, true);
+		cr->fill();
+
+		if (!sameColor) {
+			lineArrow(color2, 1.5, 0.5*d, d, false);
+			cr->fill();
+		}
+	}
+
+	if (select)
+	{
+		lineArrow(synfig::Color(1,1,1), 1.5, 0.3, 1.0, true);
+
+		if (fill)
+			cr->fill();
+		else
+			cr->stroke();
+	}
+
 	cr->restore();
+}
+
+std::pair<Color, Color> getSetColors(const std::string& str)
+{
+	auto getSetColor = [](uint32_t hash, double scale)
+	{
+		double pct =   ((hash & 0xFF000000) >> 24) / (double)0xFF;
+//        double scale = ((hash & 0x0000FF00) >> 8) / (double)0x80 + .5;
+		size_t rng =   ((hash & 0x00FFFF00) >> 8);
+
+		double r=0,g=0,b=0;
+		switch (rng % 6)
+		{
+		case 0: r = 0; g = 1; b = pct; break;
+		case 1: r = 0; g = pct; b = 1; break;
+		case 2: r = pct; g = 0; b = 1; break;
+		case 3: r = 1; g = 0; b = pct; break;
+		case 4: r = 1; g = pct; b = 0; break;
+		case 5: r = pct; g = 1; b = 0; break;
+		}
+
+		double s = scale;
+		return Color(r*s, g*s, b*s, 1.0);
+	};
+
+	std::seed_seq seed1 (str.begin(),str.end());
+	std::mt19937 generator (seed1);
+
+	Color c1 = getSetColor(generator(), .65);
+	Color c2 = getSetColor(generator(), 1);
+	return {c1, c2};
+}
+
+std::pair<Color, Color> colorsOf(const synfig::Keyframe& kf)
+{
+    static const Color normal(0,0,0,1);
+    return (kf.get_set().empty() ? std::make_pair(normal, normal): getSetColors(kf.get_set()));
 }
 
 bool
@@ -156,24 +235,23 @@ Widget_Keyframe_List::on_draw(const Cairo::RefPtr<Cairo::Context> &cr)
 
 	// TODO: hardcoded colors
 	// Colors
-	Color background(0.46, 0.55, 0.70, 1.0);
-	Color normal(0.0, 0.0, 0.0, 1.0);
-	Color selected(1.0, 1.0, 1.0, 1.0);
-	Color drag_old_position(1.0, 1.0, 1.0, 0.6);
-	Color drag_new_position(1.0, 1.0, 1.0, 1.0);
+	Color background(0.84, 0.84, 0.84, 1.0);
+
+	float normalA = 1.0;
+	float dragOldA = 0.6;
+	float dragNewA = 1.0;
 
 	if (!editable) {
-		normal.set_a(0.5);
-		selected.set_a(0.5);
-		drag_old_position.set_a(0.3);
-		drag_new_position.set_a(0.5);
+		normalA = 0.5;
+		dragOldA = 0.3;
+		dragNewA = 0.5;
 	}
 
 	const double h(get_height());
 	const double w(get_width());
 	const double y(h - 2);
 	const double ah(h - 4);
-	const double aw(2*ah);
+	const double aw(2*ah - 2);
 
 	keyframe_width = aw;
 
@@ -198,7 +276,7 @@ Widget_Keyframe_List::on_draw(const Cairo::RefPtr<Cairo::Context> &cr)
 				selected_time = i->get_time();
 			} else {
 				const double x = time_plot_data.get_pixel_t_coord(i->get_time());
-				draw_arrow(cr, x, y, aw, ah, i->active(), normal);
+				draw_arrow(cr, x, y, aw, ah, normalA, i->active(), false, colorsOf(*i));
 			}
 		}
 
@@ -206,12 +284,13 @@ Widget_Keyframe_List::on_draw(const Cairo::RefPtr<Cairo::Context> &cr)
 	// the selected keyframe is shown on top
 	if (selected_time != Time::end()) {
 		const double x = time_plot_data.get_pixel_t_coord(selected_time);
+		auto c = colorsOf(selected_kf);
 		if (dragging) {
 			const double new_x = time_plot_data.get_pixel_t_coord(dragging_kf_time);
-			draw_arrow(cr, x, y, aw, ah, selected_kf.active(), drag_old_position);
-			draw_arrow(cr, new_x, y, aw, ah, selected_kf.active(), drag_new_position);
+			draw_arrow(cr, x, y, aw, ah, dragOldA, selected_kf.active(), true, c);
+			draw_arrow(cr, new_x, y, aw, ah, dragNewA, selected_kf.active(), true, c);
 		} else {
-			draw_arrow(cr, x, y, aw, ah, selected_kf.active(), selected);
+			draw_arrow(cr, x, y, aw, ah, normalA, selected_kf.active(), true, c);
 		}
 	}
 
