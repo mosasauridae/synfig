@@ -40,8 +40,11 @@
 #include <synfig/valuenodes/valuenode_dynamiclist.h>
 #include <synfig/valuenodes/valuenode_animated.h>
 
+#include "activepointremove.h"
+#include "waypointremove.h"
 #include "activepointset.h"
 #include "waypointset.h"
+#include "timepointsdelete.h"
 #include <synfigapp/timegather.h>
 
 #include <typeinfo>
@@ -211,8 +214,16 @@ Action::TimepointsMove::prepare()
 	// 	and yes we do need to store it temporarily so we don't duplicate
 	//		an operation on a specific valuenode, etc....
 	timepoints_ref	match;
+	timepoints_ref	match_del;
 
 	Time fps = get_canvas()->rend_desc().get_frame_rate();
+
+	// need to delete waypoints at the destination
+	std::set<synfig::Time> del_times;
+	for (const synfig::Time& sel_time : sel_times)
+	{
+		del_times.insert((sel_time + timemove).round(fps));
+	}
 
 	//std::vector<synfig::Layer::Handle>
 	//synfig::info("Layers %d", sel_layers.size());
@@ -224,6 +235,7 @@ Action::TimepointsMove::prepare()
 		{
 			//synfig::info("Recurse through a layer");
 			recurse_layer(*i,sel_times,match);
+			recurse_layer(*i,del_times,match_del);
 		}
 	}
 
@@ -237,6 +249,7 @@ Action::TimepointsMove::prepare()
 		{
 			//synfig::info("Recurse through a canvas");
 			recurse_canvas(*i,sel_times,match);
+			recurse_canvas(*i,del_times,match_del);
 		}
 	}
 
@@ -250,6 +263,57 @@ Action::TimepointsMove::prepare()
 		{
 			//synfig::info("Recurse through a valuedesc");
 			recurse_valuedesc(*i,sel_times,match);
+			recurse_valuedesc(*i,del_times,match_del);
+		}
+	}              
+        
+	// filter down the delete list to those waypoints that would actually be overwritten,
+	// and be careful to not delete a moving waypoint
+	for (const ValueBaseTimeInfo& deleting : match_del.waypointbiglist)
+	{
+		for (auto del_wpt_iter = deleting.waypoints.begin(); del_wpt_iter != deleting.waypoints.end(); )
+		{
+			const synfig::Waypoint& del_wpt = *del_wpt_iter;
+
+			bool is_moving_waypoint = false;
+			bool any_moving_to_time = false;
+			for (const ValueBaseTimeInfo& moving : match.waypointbiglist)
+			{
+				for (const synfig::Waypoint& mov_wpt : moving.waypoints)
+				{
+					// don't delete waypoints that are moving
+					if (del_wpt.get_guid() == mov_wpt.get_guid())
+					{
+						is_moving_waypoint = true;
+						break;
+					}
+					else if (del_wpt.get_parent_value_node() == mov_wpt.get_parent_value_node() &&
+							 del_wpt.get_time() == (mov_wpt.get_time() + timemove).round(fps))
+					{
+						any_moving_to_time = true;
+					}
+				}
+			}
+
+			if (is_moving_waypoint || !any_moving_to_time)
+			{
+				del_wpt_iter = deleting.waypoints.erase(del_wpt_iter);
+			}
+			else
+			{
+				++del_wpt_iter;
+			}
+
+		}
+	}
+	for (const ActiveTimeInfo& i : match.actpointbiglist)
+	{
+		for (const auto& w : i.activepoints)
+		{
+			for (const ActiveTimeInfo& j : match_del.actpointbiglist)
+			{
+				j.activepoints.erase(w);
+			}
 		}
 	}
 
@@ -326,6 +390,12 @@ Action::TimepointsMove::prepare()
 
 			add_action_front(action);
 		}
+	}
+
+	// process delete
+	for (const Action::Handle& action : TimepointsDelete::makeActions(match_del, get_canvas(), get_canvas_interface()))
+	{
+		add_action_front(action);
 	}
 }
 
