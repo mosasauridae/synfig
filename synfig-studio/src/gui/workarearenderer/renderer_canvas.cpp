@@ -631,7 +631,7 @@ Renderer_Canvas::enqueue_render()
 				bool time_in_repeat_range = time_model->get_time() >= time_model->get_play_bounds_lower()
 						                 && time_model->get_time() <= time_model->get_play_bounds_upper();
 				
-				while(bg_rendering && enqueued_tasks < max_tasks && tiles_size + frame_size < max_tiles_size_soft)
+				while(is_playing && bg_rendering && enqueued_tasks < max_tasks && tiles_size + frame_size < max_tiles_size_soft)
 				{
 					Time future_time = current_frame.time + frame_duration*future;
 					bool future_exists = future_time >= time_model->get_lower()
@@ -642,10 +642,7 @@ Renderer_Canvas::enqueue_render()
 											   ? weight_future : weight_future_extra;
 
 					Time past_time = current_frame.time - frame_duration*past;
-					bool past_exists = false;
-					if(!is_playing)
-						past_exists = past_time >= time_model->get_lower()
-									&& past_time <= time_model->get_upper();
+					bool past_exists = past_time >= time_model->get_lower()	&& past_time <= time_model->get_upper();
 					Real weight_past_current = !time_in_repeat_range
 							                || ( past_time >= time_model->get_play_bounds_lower()
 							                  && past_time <= time_model->get_play_bounds_upper() )
