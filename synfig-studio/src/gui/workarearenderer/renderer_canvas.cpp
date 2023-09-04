@@ -84,7 +84,7 @@ image_rect_size(const RectInt &rect)
 /* === M E T H O D S ======================================================= */
 
 Renderer_Canvas::Renderer_Canvas():
-	max_tiles_size_soft(512*1024*1024),
+	max_tiles_size_soft(8000u*1024*1024),
 	max_tiles_size_hard(max_tiles_size_soft + 128*1024*1024),
 	weight_future      (   1.0), // high priority
 	weight_past        (   2.0), // low priority
