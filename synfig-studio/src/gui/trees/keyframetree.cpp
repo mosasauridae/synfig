@@ -117,6 +117,35 @@ KeyframeTree::KeyframeTree() : editable_(false)
 		append_column(*column);
 	}
 	{
+		Gtk::TreeView::Column* column = Gtk::manage( new Gtk::TreeView::Column(_("Set")) );
+
+		cell_renderer_set = Gtk::manage(new Gtk::CellRendererText());
+		column->pack_start(*cell_renderer_set,true);
+		column->add_attribute(cell_renderer_set->property_text(), model.set);
+		cell_renderer_set->signal_edited().connect(sigc::mem_fun(*this,&studio::KeyframeTree::on_edited_set));
+
+		column->set_reorderable();
+		column->set_resizable();
+		column->set_clickable();
+		column->set_sort_column(model.set);
+
+		append_column(*column);
+	}
+	{
+		Gtk::TreeView::Column* column = Gtk::manage( new Gtk::TreeView::Column(_("Set Len")) );
+
+		cell_renderer_time_delta_set = Gtk::manage( new CellRenderer_Time() );
+		column->pack_start(*cell_renderer_time_delta_set,true);
+		column->add_attribute(cell_renderer_time_delta_set->property_time(), model.time_delta_set);
+
+		column->set_reorderable();
+		column->set_resizable();
+		column->set_clickable(false);
+		// column->set_sort_column(model.time_delta);
+
+		append_column(*column);
+	}
+	{
 		Gtk::TreeView::Column* column = Gtk::manage( new Gtk::TreeView::Column(_("Description")) );
 
 		cell_renderer_description=Gtk::manage(new Gtk::CellRendererText());
@@ -172,6 +201,7 @@ KeyframeTree::set_model(Glib::RefPtr<KeyframeTreeStore> keyframe_tree_store)
 	sorted_store->set_default_sort_func(sigc::ptr_fun(&studio::KeyframeTreeStore::time_sorter));
 	sorted_store->set_sort_func(model.time,			sigc::ptr_fun(&studio::KeyframeTreeStore::time_sorter));
 	sorted_store->set_sort_func(model.description,	sigc::ptr_fun(&studio::KeyframeTreeStore::description_sorter));
+	sorted_store->set_sort_func(model.set,			sigc::ptr_fun(&studio::KeyframeTreeStore::set_sorter));
 	Gtk::TreeView::set_model(sorted_store);
 	Gtk::TreeView::set_model(keyframe_tree_store);
 
@@ -180,6 +210,8 @@ KeyframeTree::set_model(Glib::RefPtr<KeyframeTreeStore> keyframe_tree_store)
 	cell_renderer_time->property_fps().set_value(
 		keyframe_tree_store_->canvas_interface()->get_canvas()->rend_desc().get_frame_rate() );
 	cell_renderer_time_delta->property_fps().set_value(
+		keyframe_tree_store_->canvas_interface()->get_canvas()->rend_desc().get_frame_rate() );
+	cell_renderer_time_delta_set->property_fps().set_value(
 		keyframe_tree_store_->canvas_interface()->get_canvas()->rend_desc().get_frame_rate() );
 
 	//Listen to kf selection change from canvas interface
@@ -197,12 +229,14 @@ KeyframeTree::set_editable(bool x)
 		cell_renderer_time->property_editable()=true;
 		cell_renderer_time_delta->property_editable()=true;
 		cell_renderer_description->property_editable()=true;
+		cell_renderer_set->property_editable()=true;
 	}
 	else
 	{
 		cell_renderer_time->property_editable()=false;
 		cell_renderer_time_delta->property_editable()=false;
 		cell_renderer_description->property_editable()=false;
+		cell_renderer_set->property_editable()=false;
 	}
 }
 
@@ -257,6 +291,23 @@ KeyframeTree::on_edited_description(const Glib::ustring&path_string,const Glib::
 		row[model.description]=desc;
 		keyframe.set_description(description);
 		signal_edited_description()(keyframe,description);
+		signal_edited()(keyframe);
+	}
+}
+
+void
+KeyframeTree::on_edited_set(const Glib::ustring&path_string,const Glib::ustring &set_)
+{
+	Gtk::TreePath path(path_string);
+
+	const Gtk::TreeRow row = *(get_model()->get_iter(path));
+	const synfig::String set(set_);
+	synfig::Keyframe keyframe(row[model.keyframe]);
+	if(set!=keyframe.get_set())
+	{
+		row[model.set]=set;
+		keyframe.set_set(set);
+		signal_edited_set()(keyframe,set);
 		signal_edited()(keyframe);
 	}
 }

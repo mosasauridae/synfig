@@ -69,8 +69,10 @@ public:
 	public:
 		Gtk::TreeModelColumn<synfig::Time> time;
 		Gtk::TreeModelColumn<Glib::ustring> description;
+		Gtk::TreeModelColumn<Glib::ustring> set;
 		Gtk::TreeModelColumn<synfig::Keyframe> keyframe;
 		Gtk::TreeModelColumn<synfig::Time> time_delta;
+		Gtk::TreeModelColumn<synfig::Time> time_delta_set;
 		Gtk::TreeModelColumn<bool> active;
 
 		Model()
@@ -80,6 +82,8 @@ public:
 			add(keyframe);
 			add(time_delta);
 			add(active);
+			add(set);
+			add(time_delta_set);
 		}
 	};
 
@@ -206,6 +210,7 @@ public:
 
 	static int time_sorter(const Gtk::TreeModel::iterator &rhs,const Gtk::TreeModel::iterator &lhs);
 	static int description_sorter(const Gtk::TreeModel::iterator &rhs,const Gtk::TreeModel::iterator &lhs);
+	static int set_sorter(const Gtk::TreeModel::iterator &rhs,const Gtk::TreeModel::iterator &lhs);
 
 }; // END of class KeyframeTreeStore
 

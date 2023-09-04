@@ -58,6 +58,7 @@ private:
 
 	Time time_;
 	String desc_;
+	String set_;
 	GUID guid_;
 
 	/**
@@ -89,6 +90,9 @@ public:
 	const GUID& get_guid() const { return guid_; }
 	void set_guid(const GUID& x) { guid_=x; }
 
+	void set_set(String x) { set_=x; }
+	String get_set() const { return set_; }
+        
 	/** Enables the keyframe, by making it @em active) */
 	void enable() { set_active(true); }
 
