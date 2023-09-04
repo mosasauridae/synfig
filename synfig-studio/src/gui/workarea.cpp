@@ -975,6 +975,18 @@ WorkArea::on_key_press_event(GdkEventKey* event)
 	if (event_result != Smach::RESULT_OK)
 		return true;
 
+	if (event->keyval == GDK_KEY_q) {
+		canvas_interface->seek_frame(-1);
+		return true;
+	}
+	else if (event->keyval == GDK_KEY_e) {
+		canvas_interface->seek_frame(1);
+		return true;
+	}
+
+	if (event->state & GDK_CONTROL_MASK)
+		return false;
+                
 	// Other possible actions if current state doesn't accept the event but not forbids it
 	// - Nudge selected ducks
 
@@ -990,15 +1002,19 @@ WorkArea::on_key_press_event(GdkEventKey* event)
 	switch(event->keyval)
 	{
 		case GDK_KEY_Left:
+		case GDK_KEY_a:
 			nudge=Vector(-pw,0);
 			break;
 		case GDK_KEY_Right:
+		case GDK_KEY_d:
 			nudge=Vector(pw,0);
 			break;
 		case GDK_KEY_Up:
+		case GDK_KEY_w:
 			nudge=Vector(0,-ph);
 			break;
 		case GDK_KEY_Down:
+		case GDK_KEY_s:
 			nudge=Vector(0,ph);
 			break;
 		default:
