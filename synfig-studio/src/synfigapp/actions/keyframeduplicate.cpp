@@ -110,6 +110,7 @@ Action::KeyframeDuplicate::set_param(const synfig::String& name, const Action::P
 		    new_keyframe.apply_model(keyframe.get_waypoint_model());
 		//! Copy the active status
 		new_keyframe.set_active(keyframe.active());
+		new_keyframe.set_set(keyframe.get_set());
 
 		return true;
 	}
