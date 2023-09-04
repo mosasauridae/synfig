@@ -1289,6 +1289,7 @@ ValueNode_AnimatedInterfaceConst::get_times_vfunc(Node::time_set &set) const
 		t.set_before(i->get_before());
 		t.set_after(i->get_after());
 		t.set_guid(i->get_guid());
+		t.set_ghost(i->is_ghost() ? GhostStateOn : GhostStateOff);
 		set.insert(t);
 	}
 }
