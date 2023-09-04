@@ -131,7 +131,7 @@ Action::KeyframeRemove::prepare()
 	}
 
 
-	if (keyframe.active()){
+	if (keyframe.active() && false){
 		std::vector<synfigapp::ValueDesc> value_desc_list;
 		get_canvas_interface()->find_important_value_descs(value_desc_list);
 		while(!value_desc_list.empty())
