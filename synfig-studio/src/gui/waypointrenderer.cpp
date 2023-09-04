@@ -106,6 +106,20 @@ get_black(bool hover)
 	return Gdk::RGBA("#4e5456");
 }
 
+Gdk::RGBA apply_ghost(Gdk::RGBA color, GhostState ghost)
+{
+	switch (ghost)
+	{
+		case GhostStateOn:
+			return color_shift(color, .4);
+		case GhostStateMixed:
+			return color_shift(color, .15);
+		case GhostStateOff:
+			break;
+	}
+	return color;
+}
+
 void
 WaypointRenderer::render_time_point_to_window(
 	const Cairo::RefPtr<Cairo::Context> &cr,
@@ -115,7 +129,8 @@ WaypointRenderer::render_time_point_to_window(
 	bool hover,
 	bool double_outline)
 {
-	const Gdk::RGBA outline_color = get_black(hover);
+	Gdk::RGBA outline_color = get_black(hover);
+	outline_color = apply_ghost(outline_color, tp.get_ghost());
 
 	if(selected)
 		cr->set_line_width(2.0);
@@ -130,6 +145,7 @@ WaypointRenderer::render_time_point_to_window(
 	color=color_darken(color,1.0f);
 	if(selected)color=color_darken(color,1.3f);
 	if(hover) color = color_shift(color, 0.2);
+	color = apply_ghost(color, tp.get_ghost());
 	cr->set_source_rgb(color.get_red(),color.get_green(),color.get_blue());
 
 	const double double_outline_margin_pixels = 2.5;
@@ -269,6 +285,7 @@ WaypointRenderer::render_time_point_to_window(
 	color=color_darken(color,0.8f);
 	if(selected)color=color_darken(color,1.3f);
 	if(hover) color = color_shift(color, 0.2);
+	color = apply_ghost(color, tp.get_ghost());
 	cr->set_source_rgb(color.get_red(),color.get_green(),color.get_blue());
 
 	switch(tp.get_after())
