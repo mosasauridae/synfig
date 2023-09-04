@@ -912,6 +912,7 @@ Action::ValueDescSet::prepare()
 					|| type == type_angle
 					|| type == type_time
 					|| type == type_real
+					|| type == type_bool
 					|| type == type_vector)
 					)
 				{
