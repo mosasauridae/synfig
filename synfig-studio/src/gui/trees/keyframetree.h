@@ -83,13 +83,19 @@ private:
 
 	CellRenderer_Time *cell_renderer_time_delta;
 
+	CellRenderer_Time *cell_renderer_time_delta_set;
+
 	Gtk::CellRendererText *cell_renderer_description;
+
+	Gtk::CellRendererText *cell_renderer_set;
 
 	sigc::signal<void,synfig::Keyframe> signal_edited_;
 
 	sigc::signal<void,synfig::Keyframe,synfig::Time> signal_edited_time_;
 
 	sigc::signal<void,synfig::Keyframe,synfig::String> signal_edited_description_;
+
+	sigc::signal<void,synfig::Keyframe,synfig::String> signal_edited_set_;
 
 	sigc::signal<void, int, Gtk::TreeRow, ColumnID> signal_user_click_;
 
@@ -116,6 +122,8 @@ private:
 	void on_edited_time_delta(const Glib::ustring&path_string,synfig::Time time);
 
 	void on_edited_description(const Glib::ustring&path_string,const Glib::ustring &description);
+
+	void on_edited_set(const Glib::ustring&path_string,const Glib::ustring &set);
 
 	virtual bool on_event(GdkEvent *event);
 
@@ -152,6 +160,9 @@ public:
 
 	//! Signal called when a description has been edited.
 	sigc::signal<void,synfig::Keyframe,synfig::String>& signal_edited_description() { return signal_edited_description_; }
+        
+	//! Signal called when a set has been edited.
+	sigc::signal<void,synfig::Keyframe,synfig::String>& signal_edited_set() { return signal_edited_set_; }
 
 	sigc::signal<void,int, Gtk::TreeRow, ColumnID>& signal_user_click() { return signal_user_click_; }
 
