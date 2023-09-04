@@ -1121,7 +1121,7 @@ CanvasView::create_top_toolbar()
 		background_rendering_button->signal_toggled().connect(
 			sigc::mem_fun(*this, &CanvasView::toggle_background_rendering));
 		background_rendering_button->set_label(_("Background rendering"));
-		background_rendering_button->set_tooltip_text(_("Render future and past frames in background when enabled"));
+		background_rendering_button->set_tooltip_text(_("Render future and past frames in background when enabled and only when playback is running"));
 		background_rendering_button->show();
 
 		top_toolbar->append(*background_rendering_button);
