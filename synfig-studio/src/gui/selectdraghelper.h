@@ -391,7 +391,12 @@ SelectDragHelper<T>::process_event(GdkEvent *event)
 template<class T>
 bool SelectDragHelper<T>::process_key_press_event(GdkEventKey* event)
 {
+	if (event->state & GDK_CONTROL_MASK)
+		return false;
+
 	switch (event->keyval) {
+        case GDK_KEY_w:
+        case GDK_KEY_s:
 	case GDK_KEY_Up:
 	case GDK_KEY_Down: {
 		if (!drag_enabled)
@@ -405,11 +410,13 @@ bool SelectDragHelper<T>::process_key_press_event(GdkEventKey* event)
 		int delta = 1;
 		if (event->state & GDK_SHIFT_MASK)
 			delta = 10;
-		if (event->keyval == GDK_KEY_Up)
+		if (event->keyval == GDK_KEY_Up || event->keyval == GDK_KEY_w)
 			delta = -delta;
 		delta_drag(0, delta, true);
 		return true;
 	}
+	case GDK_KEY_a:
+	case GDK_KEY_d:
 	case GDK_KEY_Left:
 	case GDK_KEY_Right: {
 		if (!drag_enabled)
@@ -423,30 +430,10 @@ bool SelectDragHelper<T>::process_key_press_event(GdkEventKey* event)
 		int delta = 1;
 		if (event->state & GDK_SHIFT_MASK)
 			delta *= 10;
-		if (event->keyval == GDK_KEY_Left)
+		if (event->keyval == GDK_KEY_Left || event->keyval == GDK_KEY_a)
 			delta = -delta;
 		delta_drag(delta, 0, true);
 		return true;
-	}
-	case GDK_KEY_a: {
-		if ((event->state & Gdk::CONTROL_MASK) == Gdk::CONTROL_MASK) {
-			// ctrl a
-			cancel_dragging();
-			select_all_items();
-			return true;
-		}
-		break;
-	}
-	case GDK_KEY_d: {
-		if ((event->state & Gdk::CONTROL_MASK) == Gdk::CONTROL_MASK) {
-			// ctrl d
-			cancel_dragging();
-			selected_items.clear();
-			signal_redraw_needed().emit();
-			signal_selection_changed().emit();
-			return true;
-		}
-		break;
 	}
 	case GDK_KEY_Shift_L:   case GDK_KEY_Shift_R: {
 		modifiers |= Gdk::ModifierType::SHIFT_MASK;
@@ -470,6 +457,9 @@ bool SelectDragHelper<T>::process_key_press_event(GdkEventKey* event)
 template<class T>
 bool SelectDragHelper<T>::process_key_release_event(GdkEventKey* event)
 {
+	if (event->state & GDK_CONTROL_MASK)
+		return false;
+
 	switch (event->keyval) {
 	case GDK_KEY_Escape: {
 		// cancel/undo current action
@@ -481,6 +471,10 @@ bool SelectDragHelper<T>::process_key_release_event(GdkEventKey* event)
 		}
 		break;
 	}
+	case GDK_KEY_a:
+	case GDK_KEY_d:
+	case GDK_KEY_w:
+	case GDK_KEY_s:
 	case GDK_KEY_Up:
 	case GDK_KEY_Down:
 	case GDK_KEY_Left:
