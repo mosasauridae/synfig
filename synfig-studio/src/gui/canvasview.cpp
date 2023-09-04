@@ -2040,7 +2040,8 @@ CanvasView::refresh_time_window()
 
 void
 CanvasView::on_interface_time_changed()
-	{ time_model()->set_time(canvas_interface_->get_time()); }
+	{ time_model()->set_time(canvas_interface_->get_time()); 
+	time_model()->make_visible(canvas_interface_->get_time()); }
 
 void
 CanvasView::time_zoom_in()
@@ -2535,15 +2536,7 @@ CanvasView::on_play_timeout()
 	}
 
 	// scroll the time window so we can see the time value as it races across the horizon
-	Time::value_type step = (Time::value_type)(time_model()->get_page_size())*0.5;
-	if (time < time_model()->get_visible_lower()) {
-		Time::value_type dist = (Time::value_type)(time_model()->get_visible_lower() - time);
-		time_model()->move_by( -Time(ceil(dist/step)*step) );
-	} else
-	if (time > time_model()->get_visible_upper()) {
-		Time::value_type dist = (Time::value_type)(time - time_model()->get_visible_upper());
-		time_model()->move_by( Time(ceil(dist/step)*step) );
-	}
+	time_model()->make_visible(time);
 
 	// update actual time to next step
 	time_model()->set_time(time);
