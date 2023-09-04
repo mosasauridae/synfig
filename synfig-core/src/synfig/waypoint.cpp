@@ -96,6 +96,8 @@ Waypoint::Waypoint():
 void
 Waypoint::set_value(const ValueBase &x)
 {
+	set_ghost(false);
+        
 	//! If the value node is not set and we are setting the value
 	//! of an angle, then set both interpolation to linear... why?
 	if(!value_node && x.get_type()==type_angle)
@@ -119,6 +121,8 @@ Waypoint::set_value_node(const ValueNode::Handle& x)
 	if (value_node == x)
 		return;
 
+	set_ghost(false);
+        
 	ValueNode::Handle vn_parent(get_parent_value_node());
 	if (!vn_parent)
 	{
@@ -158,6 +162,7 @@ Waypoint::set_parent_value_node(const ValueNode::LooseHandle& x)
 	// is...
 	assert(!parent_);
 
+	set_ghost(false);
 	parent_=x;
 	parent_->add_child(get_value_node().get());
 }
@@ -171,6 +176,7 @@ Waypoint::is_static()const
 void
 Waypoint::set_time(const Time &x)
 {
+	set_ghost(false);
 	time=x;
 }
 
