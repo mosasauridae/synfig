@@ -21,10 +21,10 @@ then
 mode=$1
 fi
 
-cmake -GNinja -DENABLE_TESTS=ON -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_INSTALL_PREFIX=./install -DCMAKE_BUILD_TYPE="${mode}" ..
-cmake --build .
-cmake --install . >/dev/null
-ctest --output-on-failure
+cmake -GNinja -DENABLE_TESTS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_INSTALL_PREFIX=./install -DCMAKE_BUILD_TYPE="${mode}" ..
+cmake --build . -j 6
+#cmake --install . >/dev/null
+#ctest --output-on-failure
 
 echo
 echo

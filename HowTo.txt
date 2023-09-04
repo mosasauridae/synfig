@@ -1,0 +1,37 @@
+Windows
+Synfig is shipped with this special script to build it on Windows (MSYS2). All you need to do is run that script.
+
+$ ./2-build-msys-cmake.sh
+Once this is completed successfully, you can run Synfig by.
+
+$ ./cmake-build-msys/output/Release/bin/synfigstudio.exe
+You can also use this script to run a debug build by using the argument: Debug
+
+$ ./2-build-msys-cmake.sh Debug
+Then, you can run Synfig by.
+
+$ ./cmake-build-msys/output/Debug/bin/synfigstudio.exe
+
+
+Packaging using CMake
+As an optional step you might wish to build a package/installer for distribution.
+
+Synfig can be packaged for different operating systems using CPack which comes with CMake.
+
+First important thing to know is that you need a production build for that (for obvious reason it is very unlikely you want to distribute a build with debug symbols).
+
+So, make sure to get production build first by passing the flag at cmake step:
+
+$ cmake .. -D CMAKE_BUILD_TYPE=Release
+Most of the configuration are already set so no extra flags need to be set for Synfig.
+
+Below you will find instructions how to package Synfig for various operating systems.
+
+Linux
+A .deb package for Synfig can be made by using the following code.
+
+$ cpack -G DEB
+Windows
+A .exe installer for synfig can be made by using the following code.
+
+$ cpack -G NSIS
