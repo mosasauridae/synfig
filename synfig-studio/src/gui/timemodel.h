@@ -89,6 +89,8 @@ private:
 	bool set_visible_bounds_silent(synfig::Time lower, synfig::Time upper);
 	bool set_play_bounds_silent(synfig::Time lower, synfig::Time upper, bool enabled, bool repeat);
 
+	bool allow_recenter = true;
+    
 public:
 	TimeModel();
 
@@ -104,6 +106,24 @@ public:
 		if (is_play_time_changed) play_time_changed();
 	}
 
+	void set_allow_recenter(bool b) { allow_recenter = b; }
+
+	void make_visible(synfig::Time time)
+	{      
+		if (allow_recenter)
+		{
+			synfig::Time::value_type step = (synfig::Time::value_type)(this->get_page_size())*0.5;
+			if (time < this->get_visible_lower()) {
+				synfig::Time::value_type dist = (synfig::Time::value_type)(this->get_visible_lower() - time);
+				this->move_by( -synfig::Time(ceil(dist/step)*step) );
+			} else
+			if (time > this->get_visible_upper()) {
+				synfig::Time::value_type dist = (synfig::Time::value_type)(time - this->get_visible_upper());
+				this->move_by( synfig::Time(ceil(dist/step)*step) );
+			}
+		}
+	}
+        
 	bool almost_equal(const synfig::Time &a, const synfig::Time &b, const synfig::Time &range = synfig::Time()) const;
 	bool almost_equal_to_current(const synfig::Time &time, const synfig::Time &range = synfig::Time()) const
 		{ return almost_equal(get_time(), time, range); }

@@ -340,6 +340,7 @@ Widget_Timeslider::on_button_press_event(GdkEventButton *event) //for clicking
 
 	if (event->button == 1) {
 		Time time = time_plot_data->get_t_from_pixel_coord(event->x);
+		time_plot_data->time_model->set_allow_recenter(false);
 		time_plot_data->time_model->set_time(time);
 	}
 
@@ -351,6 +352,7 @@ bool
 Widget_Timeslider::on_button_release_event(GdkEventButton *event){
 	SYNFIG_EXCEPTION_GUARD_BEGIN()
 	lastx = (double)event->x;
+	time_plot_data->time_model->set_allow_recenter(true);
 	return event->button == 1 || event->button == 2;
 	SYNFIG_EXCEPTION_GUARD_END_BOOL(true)
 }
