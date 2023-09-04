@@ -380,6 +380,7 @@ Widget_Timeslider::on_button_press_event(GdkEventButton *event) //for clicking
 
 	if (event->button == 1) {
 		Time time = time_plot_data->get_t_from_pixel_coord(event->x);
+		time_plot_data->time_model->set_allow_recenter(false);
 		time_plot_data->time_model->set_time(time);
 	}
 	//if moving timeslider along with handle isnt wanted move these above prev if and add cond.
@@ -403,6 +404,7 @@ bool
 Widget_Timeslider::on_button_release_event(GdkEventButton *event){
 	SYNFIG_EXCEPTION_GUARD_BEGIN()
 	lastx = (double)event->x;
+	time_plot_data->time_model->set_allow_recenter(true);
 	moving_lower_bound_handle = false;
 	moving_upper_bound_handle = false;
 	queue_draw();
