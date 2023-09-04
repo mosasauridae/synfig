@@ -1810,6 +1810,17 @@ CanvasParser::parse_animated(xmlpp::Element *element,Canvas::Handle canvas)
 			{
 				waypoint->set_after(parse_interpolation(child,"after"));
 			}
+			if(child->get_attribute("ghost"))
+			{
+				std::string val=child->get_attribute("ghost")->get_value();
+
+				if(is_true(val))
+					waypoint->set_ghost(true);
+				else if(is_false(val))
+					waypoint->set_ghost(false);
+				else
+					 error(element,strprintf(_("Bad value \"%s\" in <%s>"),val.c_str(),"bool"));
+			}
 			}
 			catch(Exception::BadTime& x)
 			{
