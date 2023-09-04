@@ -45,6 +45,7 @@
 namespace synfigapp {
 
 class Instance;
+struct timepoints_ref;
 
 namespace Action {
 
@@ -71,6 +72,11 @@ public:
 
 	virtual void prepare();
 	virtual void perform();
+
+	static std::vector<Action::Handle> makeActions(
+		timepoints_ref& match, 
+		const synfig::Canvas::Handle& canvas,
+		const etl::loose_handle<synfigapp::CanvasInterface> canvas_interface);
 
 	ACTION_MODULE_EXT
 };
