@@ -278,6 +278,11 @@ CanvasParser::parse_keyframe(xmlpp::Element *element,Canvas::Handle canvas)
 	}
 	ret.set_active(active);
 		
+	if (element->get_attribute("set"))
+	{
+		ret.set_set(element->get_attribute("set")->get_value());
+	}
+		
 	return ret;
 }
 
