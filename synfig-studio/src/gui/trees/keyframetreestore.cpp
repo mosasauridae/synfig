@@ -223,6 +223,20 @@ KeyframeTreeStore::description_sorter(const Gtk::TreeModel::iterator &rhs,const 
 	return 0;
 }
 
+int
+KeyframeTreeStore::set_sorter(const Gtk::TreeModel::iterator &rhs,const Gtk::TreeModel::iterator &lhs)
+{
+	const Model model;
+
+	_keyframe_iterator *rhs_iter(static_cast<_keyframe_iterator*>(rhs->gobj()->user_data));
+	_keyframe_iterator *lhs_iter(static_cast<_keyframe_iterator*>(lhs->gobj()->user_data));
+
+	int comp = rhs_iter->iter->get_set().compare(lhs_iter->iter->get_set());
+	if (comp > 0) return 1;
+	if (comp < 0) return -1;
+	return 0;
+}
+
 void
 KeyframeTreeStore::set_value_impl(const Gtk::TreeModel::iterator& row, int column, const Glib::ValueBase& value)
 {
@@ -325,6 +339,25 @@ KeyframeTreeStore::set_value_impl(const Gtk::TreeModel::iterator& row, int colum
 			g_value_copy(value.gobj(),x.gobj());
 			synfig::Keyframe keyframe(*iter->iter);
 			keyframe.set_description(x.get());
+
+			synfigapp::Action::Handle action(synfigapp::Action::create("KeyframeSet"));
+
+			if(!action)
+				return;
+
+			action->set_param("canvas",canvas_interface()->get_canvas());
+			action->set_param("canvas_interface",canvas_interface());
+			action->set_param("keyframe",keyframe);
+
+			canvas_interface()->get_instance()->perform_action(action);
+		}
+		else if(column==model.set.index())
+		{
+			Glib::Value<Glib::ustring> x;
+			g_value_init(x.gobj(),model.set.type());
+			g_value_copy(value.gobj(),x.gobj());
+			synfig::Keyframe keyframe(*iter->iter);
+			keyframe.set_set(x.get());
 
 			synfigapp::Action::Handle action(synfigapp::Action::create("KeyframeSet"));
 
@@ -685,6 +718,38 @@ KeyframeTreeStore::get_value_vfunc (const Gtk::TreeModel::iterator& gtk_iter, in
 		g_value_copy(x.gobj(),value.gobj());
 		return;
 	}
+	case 6:		// Time Delta Set
+	{
+		Glib::Value<synfig::Time> x;
+		g_value_init(x.gobj(),x.value_type());
+
+		synfig::Keyframe prev_keyframe(*iter->iter);
+		synfig::Keyframe keyframe;
+		{
+			KeyframeList::iterator tmp(iter->iter);
+			do 
+			{ 
+				tmp++;
+			} while (tmp!=get_canvas()->keyframe_list().end() && tmp->get_set() != prev_keyframe.get_set());
+			if(tmp==get_canvas()->keyframe_list().end())
+			{
+				x.set(Time(0));
+				g_value_init(value.gobj(),x.value_type());
+				g_value_copy(x.gobj(),value.gobj());
+				return;
+			}
+			keyframe=*tmp;
+		}
+
+		Time delta(0);
+		try {
+			delta=keyframe.get_time()-prev_keyframe.get_time();
+		}catch(...) { }
+		x.set(delta);
+		g_value_init(value.gobj(),x.value_type());
+		g_value_copy(x.gobj(),value.gobj());
+		return;
+	}
 	case 1:		// Description
 	{
 		g_value_init(value.gobj(),G_TYPE_STRING);
@@ -709,6 +774,13 @@ KeyframeTreeStore::get_value_vfunc (const Gtk::TreeModel::iterator& gtk_iter, in
 
 		g_value_init(value.gobj(),x.value_type());
 		g_value_copy(x.gobj(),value.gobj());
+		return;
+	}
+	case 5:		// Set
+	{
+		g_value_init(value.gobj(),G_TYPE_STRING);
+		g_value_set_string(value.gobj(),iter->iter->get_set().c_str());
+		return;
 	}
 	default:
 		break;

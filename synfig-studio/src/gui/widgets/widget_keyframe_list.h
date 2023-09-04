@@ -138,8 +138,10 @@ public:
 		const Cairo::RefPtr<Cairo::Context> &cr,
 		double x, double y,
 		double width, double height,
+		float alpha,
 		bool fill,
-		const synfig::Color &color );
+		bool select,
+		const std::pair<synfig::Color, synfig::Color> &colors );
 
 protected:
 	// Events handlers
