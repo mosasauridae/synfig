@@ -223,6 +223,20 @@ Action::TimepointsDelete::prepare()
 	}
 
 	//process them...
+	for (const Action::Handle& action : makeActions(match, get_canvas(), get_canvas_interface()))
+	{
+		add_action_front(action);
+	}
+}
+
+std::vector<Action::Handle>
+Action::TimepointsDelete::makeActions(
+	timepoints_ref& match, 
+	const synfig::Canvas::Handle& canvas,
+	const etl::loose_handle<synfigapp::CanvasInterface> canvas_interface)
+{
+	std::vector<Action::Handle> res;
+
 	{
 		//must build from both lists
 		timepoints_ref::waytracker::const_iterator 	i = match.waypointbiglist.begin(),
@@ -236,8 +250,8 @@ Action::TimepointsDelete::prepare()
 			{
 				Action::Handle action(WaypointRemove::create());
 
-				action->set_param("canvas",get_canvas());
-				action->set_param("canvas_interface",get_canvas_interface());
+				action->set_param("canvas",canvas);
+				action->set_param("canvas_interface",canvas_interface);
 				action->set_param("value_node",ValueNode::Handle(i->val));
 				action->set_param("waypoint",*j);
 
@@ -246,7 +260,7 @@ Action::TimepointsDelete::prepare()
 				if(!action->is_ready())
 					throw Error(Error::TYPE_NOTREADY);
 
-				add_action_front(action);
+				res.push_back(std::move(action));
 			}
 		}
 	}
@@ -263,8 +277,8 @@ Action::TimepointsDelete::prepare()
 			{
 				Action::Handle action(ActivepointRemove::create());
 
-				action->set_param("canvas",get_canvas());
-				action->set_param("canvas_interface",get_canvas_interface());
+				action->set_param("canvas",canvas);
+				action->set_param("canvas_interface",canvas_interface);
 				action->set_param("value_desc",i->val);
 				action->set_param("activepoint",*j);
 
@@ -275,10 +289,12 @@ Action::TimepointsDelete::prepare()
 					throw Error(Error::TYPE_NOTREADY);
 				}
 
-				add_action_front(action);
+				res.push_back(std::move(action));
 			}
 		}
 	}
+
+	return res;
 }
 
 void
