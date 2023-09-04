@@ -481,6 +481,8 @@ xmlpp::Element* encode_animated(xmlpp::Element* root,ValueNode_Animated::ConstHa
 			waypoint_node->set_attribute("continuity",strprintf("%f",iter->get_continuity()));
 		if(iter->get_bias()!=0.0)
 			waypoint_node->set_attribute("bias",strprintf("%f",iter->get_bias()));
+		if(iter->is_ghost())
+			waypoint_node->set_attribute("ghost","true");
 
 	}
 

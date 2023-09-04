@@ -60,6 +60,13 @@
 
 namespace synfig {
 
+enum GhostState
+{
+	GhostStateOff,
+	GhostStateOn,
+	GhostStateMixed
+};
+
 //!\brief TimePoint class: holds the time and the before and after interpolation mode
 /**
  * It includes a GUID, to make it unique
@@ -70,6 +77,7 @@ class TimePoint
 	GUID guid;
 	Time time;
 	Interpolation before,after;
+	GhostState ghost = GhostStateOff;
 public:
 
 	TimePoint(const Time& x=Time::begin()):
@@ -84,6 +92,9 @@ public:
 	const Time& get_time()const { return time; }
 	Interpolation get_before()const { return before; }
 	Interpolation get_after()const { return after; }
+
+	GhostState get_ghost() const {return ghost;}
+	void set_ghost(GhostState x) {ghost=x; }
 
 	void set_guid(const GUID& x) { guid=x; }
 	void set_time(const Time& x) { time=x; }
