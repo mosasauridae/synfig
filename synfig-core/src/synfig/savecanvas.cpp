@@ -98,6 +98,8 @@ xmlpp::Element* encode_keyframe(xmlpp::Element* root,const Keyframe &kf, float f
 	if(!kf.get_description().empty())
 		root->set_child_text(kf.get_description());
 	root->set_attribute("active", kf.active()?"true":"false");
+	if (!kf.get_set().empty())
+		root->set_attribute("set", kf.get_set());
 	return root;
 }
 
