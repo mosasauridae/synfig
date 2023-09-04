@@ -81,6 +81,7 @@
 #include <synfig/rendering/renderer.h>
 #include <synfig/valuenodes/valuenode_animated.h>
 
+#include <synfigapp/actions/valuedescset.h>
 #include <synfigapp/canvasinterface.h>
 #include <synfigapp/main.h>
 #include <synfigapp/inputdevice.h>
@@ -2115,6 +2116,7 @@ CanvasView::toggle_animatebutton()
 {
 	if(toggling_animate_mode_)
 		return;
+	synfigapp::Action::ValueDescSet::resetShowEditAnimatedParametersDialogFlag();
 	if(get_mode()&MODE_ANIMATE)
 		set_mode(get_mode()-MODE_ANIMATE);
 	else

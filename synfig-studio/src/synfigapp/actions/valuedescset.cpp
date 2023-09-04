@@ -94,6 +94,9 @@ ACTION_SET_VERSION(Action::ValueDescSet,"0.0");
 
 /* === M E T H O D S ======================================================= */
 
+bool Action::ValueDescSet::Show_Edit_Animated_Parameter_Dialog = true;
+bool Action::ValueDescSet::Auto_Respond_Message_Shown = false;
+
 Action::ValueDescSet::ValueDescSet():
 	time(0),
 	recursive(true),
@@ -912,18 +915,45 @@ Action::ValueDescSet::prepare()
 					|| type == type_vector)
 					)
 				{
-					if (!lock_animation)
+					if (!lock_animation && Show_Edit_Animated_Parameter_Dialog)
 					{
+						bool error = false;
 						if ( !get_canvas_interface()
-						  || !get_canvas_interface()->get_ui_interface()
-						  || UIInterface::RESPONSE_OK != get_canvas_interface()->get_ui_interface()->confirmation(
+							 || !get_canvas_interface()->get_ui_interface()
+							 || UIInterface::RESPONSE_OK != get_canvas_interface()->get_ui_interface()->confirmation(
 								 _("You are trying to edit animated parameter while Animation Mode is off.\n\nDo you want to apply offset to this animation?" ),
-								 _("Hint: You can hold Spacebar key while editing parameter to avoid this confirmation dialog."),
+								 Auto_Respond_Message_Shown
+								 ? _("Hint: You can hold Spacebar key while editing parameter to avoid this confirmation dialog.")
+								 : _("Hint: If you answer Yes you will be given an option to suppress this message for this session"),
 								 _("Yes"),
 								 _("No"),
 								 synfigapp::UIInterface::RESPONSE_OK ))
 						{
+							error = true;
+						}
+
+						if (error)
+						{
 							throw Error(Error::TYPE_UNABLE); // Issue  #693
+						}
+						else
+						{
+							if (!Auto_Respond_Message_Shown)
+							{
+								if ( !get_canvas_interface()
+									 || !get_canvas_interface()->get_ui_interface()
+									 || UIInterface::RESPONSE_OK == get_canvas_interface()->get_ui_interface()->confirmation(
+										 _("Automatically apply offsets when editing animated parameters during this session?" ),
+										 _("Hint: This confirmation will be shown once in this session"),
+										 _("Yes"),
+										 _("No"),
+										 synfigapp::UIInterface::RESPONSE_OK ))
+								{
+									Show_Edit_Animated_Parameter_Dialog = false;
+								}
+
+								Auto_Respond_Message_Shown = true;
+							}
 						}
 					}
 
