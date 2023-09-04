@@ -61,7 +61,19 @@ private:
 	/// convenient method to create a ValueDescSet action and add it to stack
 	void add_action_valuedescset(const synfig::ValueBase& value, const ValueDesc& value_desc, bool recursive = true);
 
+	static bool Show_Edit_Animated_Parameter_Dialog;
+	static bool Auto_Respond_Message_Shown;
+
 public:
+
+	// this is a big giant hack. the better way to do this would be to accept these
+	// as input parameters and manage them at a higher level. that way the decision
+	// can be managed better.
+	static void resetShowEditAnimatedParametersDialogFlag()
+	{
+		Show_Edit_Animated_Parameter_Dialog = true;
+		Auto_Respond_Message_Shown = false;
+	}
 
 	ValueDescSet();
 
