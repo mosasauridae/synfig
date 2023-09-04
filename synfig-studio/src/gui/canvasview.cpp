@@ -913,6 +913,8 @@ CanvasView::create_time_bar()
 		sigc::mem_fun(*time_model(), &TimeModel::set_play_bounds_upper_to_current));
 	framedial->show();
 
+	framedial->toggle_repeat(true);
+
 	Gtk::Separator *separator = manage(new Gtk::Separator());
 	separator->show();
 
