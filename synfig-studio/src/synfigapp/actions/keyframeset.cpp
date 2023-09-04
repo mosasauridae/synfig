@@ -124,7 +124,7 @@ Action::KeyframeSet::prepare()
 	// If the times are different and keyframe is not disabled, then we
 	// will need to romp through the valuenodes
 	// and add actions to update their values.
-	if (new_time != old_time && keyframe.active()) {
+	if (new_time != old_time && keyframe.active() && false) {
 		std::vector<synfigapp::ValueDesc> value_desc_list;
 		get_canvas_interface()->find_important_value_descs(value_desc_list);
 		while (!value_desc_list.empty()) {
