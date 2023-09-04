@@ -143,6 +143,10 @@ TimePoint::absorb(const TimePoint& x)
 		set_after(INTERPOLATION_UNDEFINED);
 	if(get_before()!=x.get_before() && x.get_before()!=INTERPOLATION_NIL)
 		set_before(INTERPOLATION_UNDEFINED);
+
+	// Absorb ghost
+	if (get_ghost() != x.get_ghost())
+		set_ghost(GhostStateMixed);
 }
 
 TimePointSet::iterator
