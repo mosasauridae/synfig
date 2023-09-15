@@ -208,7 +208,7 @@ Region::get_param_vocab()const
 	// Skip polygon parameters
 	Layer::Vocab ret(Layer_Shape::get_param_vocab());
 
-	ret.push_back(ParamDesc("bline")
+	ret.insert(std::next(ret.begin(), 5), ParamDesc("bline")
 		.set_local_name(_("Vertices"))
 		.set_origin("origin")
 		.set_description(_("A list of spline points"))
