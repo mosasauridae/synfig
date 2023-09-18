@@ -2639,6 +2639,21 @@ remove_waypoints(std::set<Waypoint, std::less<UniqueID> > waypoints,
 	}
 }
 
+static void
+waypoint_strip_ghost(std::set<Waypoint, std::less<UniqueID> > waypoints,
+					etl::loose_handle<CanvasInterface> canvas_interface)
+{
+	// Create the action group
+	Action::PassiveGrouper group(canvas_interface->get_instance().get(),_("Strip Ghost Tag"));
+
+	std::set<Waypoint, std::less<UniqueID> >::const_iterator iter;
+	for (iter = waypoints.begin(); iter != waypoints.end(); ++iter) {
+		Waypoint waypoint(*iter);
+		ValueNode::Handle value_node(iter->get_parent_value_node());
+		canvas_interface->waypoint_strip_ghost(value_node, waypoint);
+	}
+}
+
 void
 CanvasView::on_waypoint_clicked_canvasview(ValueDesc value_desc,
 										   std::set<Waypoint, std::less<UniqueID> > waypoint_set,
@@ -2709,6 +2724,16 @@ CanvasView::on_waypoint_clicked_canvasview(ValueDesc value_desc,
 			item->set_use_underline(true);
 			item->signal_activate().connect(
 					sigc::mem_fun(waypoint_dialog,&Gtk::Widget::show));
+			item->show();
+			waypoint_menu->append(*item);
+		}
+
+		if (std::any_of(waypoint_set.begin(), waypoint_set.end(), [](const Waypoint& w) { return w.is_ghost(); }))
+		{
+			item = manage(new Gtk::MenuItem(_("_Strip Ghost Flag")));
+			item->set_use_underline(true);
+			item->signal_activate().connect(
+				sigc::bind(sigc::ptr_fun(waypoint_strip_ghost), waypoint_set, canvas_interface()));
 			item->show();
 			waypoint_menu->append(*item);
 		}
