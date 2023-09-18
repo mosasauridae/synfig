@@ -231,11 +231,11 @@ public:
 	//! Gets the before Interpolation
 	Interpolation get_before()const { return before; }
 	//! Sets the before Interpolation
-	void set_before(Interpolation x) { set_ghost(false); before=x; }
+	void set_before(Interpolation x) { before=x; }
 	//! Gets the after Interpolation
 	Interpolation get_after()const { return after; }
 	//! Sets the after Interpolation
-	void set_after(Interpolation x) { set_ghost(false); after=x; }
+	void set_after(Interpolation x) { after=x; }
 	//! Gets the value hold by the Waypoint
 	ValueBase get_value()const;
 	//!Gets the value hold by the Waypoint at time \t when it is animated

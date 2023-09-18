@@ -69,8 +69,9 @@ target_sources(synfigapp
         "${CMAKE_CURRENT_LIST_DIR}/valuenodereplace.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/vectorization.cpp"
 
-        "${CMAKE_CURRENT_LIST_DIR}/waypointadd.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/waypointremove.cpp"
+		"${CMAKE_CURRENT_LIST_DIR}/waypointadd.cpp"
+		"${CMAKE_CURRENT_LIST_DIR}/waypointremove.cpp"
+		"${CMAKE_CURRENT_LIST_DIR}/waypointstripghost.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/waypointset.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/waypointsetsmart.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/waypointsimpleadd.cpp"
