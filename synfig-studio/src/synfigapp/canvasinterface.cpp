@@ -1187,6 +1187,28 @@ CanvasInterface::waypoint_remove(ValueNode::Handle value_node,synfig::Waypoint w
 		get_ui_interface()->error(_("Action Failed."));
 }
 
+void CanvasInterface::waypoint_strip_ghost(ValueDesc value_desc, synfig::Waypoint waypoint)
+{
+	waypoint_strip_ghost(value_desc.get_value_node(), waypoint);
+}
+
+void CanvasInterface::waypoint_strip_ghost(synfig::ValueNode::Handle value_node, synfig::Waypoint waypoint)
+{
+	Action::Handle 	action(Action::create("WaypointStripGhost"));
+
+	assert(action);
+	if(!action)
+		return;
+
+	action->set_param("canvas",get_canvas());
+	action->set_param("canvas_interface",etl::loose_handle<CanvasInterface>(this));
+	action->set_param("waypoint",waypoint);
+	action->set_param("value_node",value_node);
+
+	if(!get_instance()->perform_action(action))
+		get_ui_interface()->error(_("Action Failed."));
+}
+
 bool
 CanvasInterface::change_value(synfigapp::ValueDesc value_desc,synfig::ValueBase new_value,bool lock_animation)
 {
