@@ -160,28 +160,33 @@ CanvasInterface::create(etl::loose_handle<Instance> instance, Canvas::Handle can
 }
 
 void
-CanvasInterface::set_mode(Mode x)
+CanvasInterface::set_mode(Mode x, bool asAction)
 {
-	Action::Handle 	action(Action::EditModeSet::create());
-
-	assert(action);
-
-	action->set_param("canvas",get_canvas());
-	action->set_param("canvas_interface",etl::loose_handle<CanvasInterface>(this));
-	action->set_param("edit_mode",x);
-
-	if(!action->is_ready())
+	if (asAction)
 	{
-		get_ui_interface()->error(_("Action Not Ready, unable to change mode"));
-		assert(0);
-		return;
+		Action::Handle 	action(Action::EditModeSet::create());
+
+		assert(action);
+
+		action->set_param("canvas",get_canvas());
+		action->set_param("canvas_interface",etl::loose_handle<CanvasInterface>(this));
+		action->set_param("edit_mode",x);
+
+		if(!action->is_ready())
+		{
+			get_ui_interface()->error(_("Action Not Ready, unable to change mode"));
+			assert(0);
+			return;
+		}
+
+		if(!get_instance()->perform_action(action))
+			get_ui_interface()->error(_("Unable to change mode"));
 	}
-
-	if(!get_instance()->perform_action(action))
-		get_ui_interface()->error(_("Unable to change mode"));
-
-//	mode_=x;
-//	signal_mode_changed_(x);
+	else
+	{
+		mode_=x;
+		signal_mode_changed_(x);
+	}
 }
 
 CanvasInterface::Mode
