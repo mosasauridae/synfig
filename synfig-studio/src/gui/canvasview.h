@@ -113,6 +113,7 @@ namespace studio {
 
 class CanvasViewUIInterface;
 class CanvasViewSelectionManager;
+class CanvasViewParams;
 class CellRenderer_TimeTrack;
 class CellRenderer_ValueBase;
 class WorkArea;
@@ -651,6 +652,9 @@ public:
 	void toggle_duck_mask_all();
 	/** show or hide both toolbars */
 	void set_show_toolbars(bool show);
+
+	CanvasViewParams get_view_state() const;
+	void restore_view_state(const CanvasViewParams& state);
 
 	/*
  -- ** -- S I G N A L   T E R M I N A L S -------------------------------------

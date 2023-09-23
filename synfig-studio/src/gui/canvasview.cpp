@@ -59,6 +59,7 @@
 #include <gtkmm/toolitem.h>
 
 #include <gui/app.h>
+#include <gui/canvasviewparams.h>
 #include <gui/dialogs/dialog_canvasdependencies.h>
 #include <gui/dials/keyframedial.h>
 #include <gui/dials/resolutiondial.h>
@@ -3667,4 +3668,38 @@ CanvasView::set_show_toolbars(bool show)
 	top_toolbar->set_visible(show);
 	right_toolbar->set_visible(show);
 	stopbutton->set_visible(show);
+}
+
+CanvasViewParams CanvasView::get_view_state() const
+{
+	CanvasViewParams state;
+
+	state.set_current_time(canvas_interface()->get_time());
+
+	state.play_bounds_lower_ = time_model_->get_play_bounds_lower();
+	state.play_bounds_upper_ = time_model_->get_play_bounds_upper();
+	state.play_bounds_enable_ = time_model_->get_play_bounds_enabled();
+	state.play_repeat_ = time_model_->get_play_repeat();
+
+	state.work_area_zoom_ = work_area->get_zoom();
+	state.work_area_focus_ = work_area->get_focus_point();
+
+	state.mode_ = get_mode();
+
+	return state;
+}
+
+void CanvasView::restore_view_state(const CanvasViewParams &state)
+{
+	canvas_interface()->seek_time(state.get_current_time());
+
+	time_model_->set_play_bounds(state.play_bounds_lower_,
+								 state.play_bounds_upper_,
+								 state.play_bounds_enable_,
+								 state.play_repeat_);
+
+	work_area->set_focus_point(state.work_area_focus_);
+	work_area->set_zoom(state.work_area_zoom_);
+
+	canvas_interface()->set_mode(state.mode_, false);
 };
