@@ -54,6 +54,7 @@
 #include <gui/app.h>
 #include <gui/autorecover.h>
 #include <gui/canvasview.h>
+#include <gui/canvasviewparams.h>
 #include <gui/docks/dock_toolbox.h>
 #include <gui/iconcontroller.h>
 #include <gui/localization.h>
@@ -862,6 +863,8 @@ Instance::revert()
 
 	Canvas::Handle canvas(get_canvas());
 
+	CanvasViewParams view_state = find_canvas_view(canvas)->get_view_state();
+
 	close();
 
 	if (canvas->use_count() != 1) {
@@ -880,7 +883,9 @@ Instance::revert()
 	}
 	canvas=0;
 
-	App::open(filename);
+	App::open(filename, &view_state);
+
+//	get_canvas()->set_time(time);
 }
 
 bool
