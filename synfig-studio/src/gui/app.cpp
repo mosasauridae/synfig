@@ -3539,6 +3539,12 @@ App::wrap_into_temporary_filesystem(
 bool
 App::open(filesystem::Path filename, /* std::string as, */ synfig::FileContainerZip::file_size_t truncate_storage_size)
 {
+	return open(filename, nullptr, truncate_storage_size);
+}
+
+bool
+App::open(synfig::filesystem::Path filename, const CanvasViewParams* state_params, /* std::string as, */ synfig::FileContainerZip::file_size_t truncate_storage_size)
+{
 #ifdef _WIN32
 	{
 
@@ -3578,7 +3584,10 @@ App::open(filesystem::Path filename, /* std::string as, */ synfig::FileContainer
 		Canvas::Handle canvas = open_canvas_as(canvas_file_system ->get_identifier(canvas_filename), filename.u8string(), errors, warnings);
 		if(canvas && get_instance(canvas))
 		{
-			get_instance(canvas)->find_canvas_view(canvas)->present();
+			CanvasView::Handle canvas_view = get_instance(canvas)->find_canvas_view(canvas);
+			if (state_params != nullptr)
+				canvas_view->restore_view_state(*state_params);
+			canvas_view->present();
 			info("%s is already open", canvas_filename.c_str());
 			// throw (String)strprintf(_("\"%s\" appears to already be open!"),filename.c_str());
 		}
@@ -3605,6 +3614,10 @@ App::open(filesystem::Path filename, /* std::string as, */ synfig::FileContainer
 
 			if(!instance)
 				throw (String)strprintf(_("Unable to create instance for \"%s\""), filename.u8_str());
+
+			CanvasView::Handle canvas_view = get_instance(canvas)->find_canvas_view(canvas);
+			if (state_params != nullptr)
+				canvas_view->restore_view_state(*state_params);
 
 			one_moment.hide();
 		}
