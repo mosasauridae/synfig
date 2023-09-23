@@ -89,6 +89,7 @@ class About;
 class MainWindow;
 class Instance;
 class CanvasView;
+class CanvasViewParams;
 class Dialog_Setup;
 class Dialog_Gradient;
 class Dialog_Input;
@@ -379,6 +380,12 @@ public:
 
 	static bool open(
 		synfig::filesystem::Path filename,
+		/* std::string as, */
+		synfig::FileContainerZip::file_size_t truncate_storage_size = 0 );
+
+	static bool open(
+		synfig::filesystem::Path filename,
+		const CanvasViewParams* state_params,
 		/* std::string as, */
 		synfig::FileContainerZip::file_size_t truncate_storage_size = 0 );
 
