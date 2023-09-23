@@ -283,7 +283,7 @@ public:
 
 	//! Sets the current editing mode
 	/*! \see Mode */
-	void set_mode(Mode x);
+	void set_mode(Mode x, bool asAction = true);
 
 	//! Retrieves the current editing mode
 	/*! \see Mode */
