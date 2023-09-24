@@ -45,6 +45,10 @@
 
 #endif
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 /* === U S I N G =========================================================== */
 
 using namespace synfig;
@@ -62,6 +66,11 @@ using namespace studio;
 
 int main(int argc, char **argv)
 {
+#ifdef _WIN32
+	HWND hWnd = GetConsoleWindow();
+	ShowWindow( hWnd, SW_HIDE );
+#endif
+
 	synfig::OS::fallback_binary_path = filesystem::Path(Glib::filename_to_utf8(argv[0]));
 	const filesystem::Path rootpath = synfig::OS::get_binary_path().parent_path().parent_path();
 	
