@@ -30,6 +30,8 @@ endif()
 ##
 
 if(WIN32)
+	add_link_options(-mwindows)
+
 	set(RC_FILE ${SYNFIG_BUILD_ROOT}/share/synfig/icons/classic/synfigstudio.rc)
 	configure_file(synfigstudio.rc ${RC_FILE})
 	add_executable(synfigstudio main.cpp ${RC_FILE})
