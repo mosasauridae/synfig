@@ -1,9 +1,11 @@
 /* === S Y N F I G ========================================================= */
-/*!	\file keyframeduplicate.h
-**	\brief Template File
+/*!	\file interpolation.h
+**	\brief Template Header
 **
 **	\legal
 **	Copyright (c) 2002-2005 Robert B. Quattlebaum Jr., Adrian Bentley
+**	Copyright (c) 2007, 2008 Chris Moore
+**	Copyright (c) 2012, Carlos López
 **
 **	This file is part of Synfig.
 **
@@ -25,14 +27,10 @@
 
 /* === S T A R T =========================================================== */
 
-#ifndef __SYNFIG_APP_ACTION_KEYFRAMEDUPLICATE_H
-#define __SYNFIG_APP_ACTION_KEYFRAMEDUPLICATE_H
+#ifndef __SYNFIG_KEYFRAMEMODE_H
+#define __SYNFIG_KEYFRAMEMODE_H
 
 /* === H E A D E R S ======================================================= */
-
-#include <synfigapp/action.h>
-#include <synfig/keyframe.h>
-#include <synfig/keyframemode.h>
 
 /* === M A C R O S ========================================================= */
 
@@ -40,43 +38,16 @@
 
 /* === C L A S S E S & S T R U C T S ======================================= */
 
-namespace synfigapp {
+namespace synfig {
 
-class Instance;
-
-namespace Action {
-
-class KeyframeDuplicate :
-	public Super
+enum KeyframeMode
 {
-private:
-	synfig::KeyframeMode mode;
-	bool mode_set = false;
-
-	synfig::Keyframe keyframe;
-	synfig::Keyframe new_keyframe;
-
-	void process_value_desc(const synfigapp::ValueDesc& value_desc);
-
-public:
-
-	KeyframeDuplicate();
-
-	static ParamVocab get_param_vocab();
-	static bool is_candidate(const ParamList &x);
-
-	virtual bool set_param(const synfig::String& name, const Param &);
-	virtual bool is_ready()const;
-
-	virtual void prepare();
-	virtual void perform();
-	virtual void undo();
-
-	ACTION_MODULE_EXT
+	KEYFRAMEMODE_MOVE_AND_SCALE,
+	KEYFRAMEMODE_MOVE_ONLY,
+	KEYFRAMEMODE_NO_MOVE
 };
 
-}; // END of namespace action
-}; // END of namespace studio
+}; // END of namespace synfig
 
 /* === E N D =============================================================== */
 
