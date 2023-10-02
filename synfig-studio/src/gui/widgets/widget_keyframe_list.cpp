@@ -42,6 +42,7 @@
 #include <gui/app.h>
 #include <gui/exception_guard.h>
 #include <gui/localization.h>
+#include <synfigapp/main.h>
 //#include <synfig/general.h>
 #include <random>
 #endif
@@ -367,6 +368,7 @@ Widget_Keyframe_List::perform_move_kf(bool delta)
 		action->set_param("canvas", canvas_interface->get_canvas());
 		action->set_param("canvas_interface", canvas_interface);
 		action->set_param("keyframe", selected_kf);
+		action->set_param("mode", synfigapp::Main::get_keyframemode());
 		try {
 			canvas_interface->get_instance()->perform_action(action);
 			canvas_interface->signal_keyframe_selected()(selected_kf);

@@ -1199,6 +1199,11 @@ Instance::process_action(synfig::String name, synfigapp::Action::ParamList param
 				action->set_param(iter->get_name(),str);
 				break;
 			}
+			case synfigapp::Action::Param::TYPE_KEYFRAMEMODE:
+			{
+				action->set_param(iter->get_name(), synfigapp::Main::get_keyframemode());
+				break;
+			}
 			default:
 				synfig::error("Unsupported user-supplied action parameter");
 				return;

@@ -1,4 +1,4 @@
-/* === S Y N F I G ========================================================= */
+﻿/* === S Y N F I G ========================================================= */
 /*!	\file keyframeset.cpp
 **	\brief Template File
 **
@@ -82,6 +82,10 @@ Action::KeyframeSet::get_param_vocab()
 		.set_local_name(_("New Keyframe"))
 		.set_desc(_("Keyframe to be added"))
 	);
+	ret.push_back(ParamDesc("mode",Param::TYPE_KEYFRAMEMODE)
+		.set_local_name(_("Mode"))
+		.set_desc(_("Keyframe mode"))
+	);
 
 	return ret;
 }
@@ -100,6 +104,12 @@ Action::KeyframeSet::set_param(const synfig::String& name, const Action::Param &
 		keyframe=param.get_keyframe();
 		return true;
 	}
+	if(name=="mode" && param.get_type() == Param::TYPE_KEYFRAMEMODE)
+	{
+		mode=param.get_keyframe_mode();
+		mode_set = true;
+		return true;
+	}
 
 	return Action::CanvasSpecific::set_param(name,param);
 }
@@ -108,6 +118,8 @@ bool
 Action::KeyframeSet::is_ready()const
 {
 	if(keyframe.get_time()==(Time::begin()-1))
+		return false;
+	if (!mode_set)
 		return false;
 	return Action::CanvasSpecific::is_ready();
 }
@@ -124,12 +136,15 @@ Action::KeyframeSet::prepare()
 	// If the times are different and keyframe is not disabled, then we
 	// will need to romp through the valuenodes
 	// and add actions to update their values.
-	if (new_time != old_time && keyframe.active() && false) {
-		std::vector<synfigapp::ValueDesc> value_desc_list;
-		get_canvas_interface()->find_important_value_descs(value_desc_list);
-		while (!value_desc_list.empty()) {
-			process_value_desc(value_desc_list.back());
-			value_desc_list.pop_back();
+	if (mode != synfig::KEYFRAMEMODE_NO_MOVE)
+	{
+		if (new_time != old_time && keyframe.active()) {
+			std::vector<synfigapp::ValueDesc> value_desc_list;
+			get_canvas_interface()->find_important_value_descs(value_desc_list);
+			while (!value_desc_list.empty()) {
+				process_value_desc(value_desc_list.back());
+				value_desc_list.pop_back();
+			}
 		}
 	}
 }
@@ -253,6 +268,43 @@ Action::KeyframeSet::scale_waypoints(const synfigapp::ValueDesc& value_desc,cons
 	return 0;
 }
 
+bool KeyframeSet::isChanging(synfig::ValueNode_Animated::Handle value_node_desc)
+{
+	// if prev/next node doesn't exist or is constant, it's not changing
+	try {
+		auto next = value_node_desc->find_next(new_time);
+		if (next->get_before() == INTERPOLATION_CONSTANT)
+			return false;
+
+		auto prev = value_node_desc->find_prev(new_time);
+		if (prev->get_after() == INTERPOLATION_CONSTANT)
+			return false;
+	}
+	catch(...) {
+		return false;
+	}
+
+	return true;
+}
+
+bool KeyframeSet::isGhost(synfig::ValueNode_Animated::Handle value_node_desc)
+{
+	// if either prev/next node is ghost, it's ghost
+	try {
+		auto next = value_node_desc->find_next(new_time);
+		if (next->is_ghost())
+			return true;
+
+		auto prev = value_node_desc->find_prev(new_time);
+		if (prev->is_ghost())
+			return true;
+	}
+	catch(...) {
+	}
+
+	return false;
+}
+
 void
 Action::KeyframeSet::process_value_desc(const synfigapp::ValueDesc& value_desc)
 {
@@ -272,7 +324,7 @@ Action::KeyframeSet::process_value_desc(const synfigapp::ValueDesc& value_desc)
 			for(i=0;i<value_node_dynamic->link_count();i++)
 			{
 				synfigapp::ValueDesc value_desc(value_node_dynamic,i);
-				if(new_time>keyframe_prev && new_time<keyframe_next)
+				if(new_time>keyframe_prev && new_time<keyframe_next && mode==KEYFRAMEMODE_MOVE_AND_SCALE)
 				{
 					// In this circumstance, we need to adjust any
 					// activepoints between the previous and next
@@ -296,6 +348,9 @@ Action::KeyframeSet::process_value_desc(const synfigapp::ValueDesc& value_desc)
 					}
 					catch(...)
 					{
+						if (mode==KEYFRAMEMODE_MOVE_ONLY)
+							continue;
+
 						activepoint.set_time(new_time);
 						activepoint.set_state(value_node_dynamic->list[i].status_at_time(old_time));
 						activepoint.set_priority(0);
@@ -312,7 +367,7 @@ Action::KeyframeSet::process_value_desc(const synfigapp::ValueDesc& value_desc)
 		}
 		else if(ValueNode_Animated::Handle::cast_dynamic(value_node))
 		{
-			if(new_time>keyframe_prev && new_time<keyframe_next)
+			if(new_time>keyframe_prev && new_time<keyframe_next && mode==KEYFRAMEMODE_MOVE_AND_SCALE)
 			{
 					// In this circumstance, we need to adjust any
 					// waypoints between the previous and next
@@ -338,10 +393,14 @@ Action::KeyframeSet::process_value_desc(const synfigapp::ValueDesc& value_desc)
 				}
 				catch(...)
 				{
+					if (mode==KEYFRAMEMODE_MOVE_ONLY || !isChanging(value_node_animated))
+						return;
+
 					waypoint.set_time(new_time);
 					waypoint.set_value((*value_node_animated)(old_time));
 					waypoint.set_before(synfigapp::Main::get_interpolation());
 					waypoint.set_after(synfigapp::Main::get_interpolation());
+					waypoint.set_ghost(isGhost(value_node_animated));
 				}
 				action->set_param("waypoint",waypoint);
 

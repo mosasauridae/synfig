@@ -81,6 +81,10 @@ Action::KeyframeRemove::get_param_vocab()
 		.set_local_name(_("Keyframe"))
 		.set_desc(_("Keyframe to be removed"))
 	);
+	ret.push_back(ParamDesc("mode",Param::TYPE_KEYFRAMEMODE)
+		.set_local_name(_("Mode"))
+		.set_desc(_("Keyframe mode"))
+	);
 
 	return ret;
 }
@@ -97,6 +101,7 @@ Action::KeyframeRemove::set_param(const synfig::String& name, const Action::Para
 	if(name=="keyframe" && param.get_type()==Param::TYPE_KEYFRAME)
 	{
 		keyframe=param.get_keyframe();
+
 		// For some reason the state of the keyframe is not always passed correctly
 		// Make sure to get it right:
 		KeyframeList::iterator iter;
@@ -104,6 +109,12 @@ Action::KeyframeRemove::set_param(const synfig::String& name, const Action::Para
 		if (get_canvas()->keyframe_list().find(keyframe, iter)) {
 			keyframe.set_active(iter->active());
 		}
+		return true;
+	}
+	if (name=="mode" && param.get_type()==Param::TYPE_KEYFRAMEMODE)
+	{
+		mode = param.get_keyframe_mode();
+		mode_set = true;
 		return true;
 	}
 
@@ -115,6 +126,10 @@ Action::KeyframeRemove::is_ready()const
 {
 	if(keyframe.get_time()==(Time::begin()-1))
 		return false;
+
+	if (!mode_set)
+		return false;
+
 	return Action::CanvasSpecific::is_ready();
 }
 
@@ -131,13 +146,16 @@ Action::KeyframeRemove::prepare()
 	}
 
 
-	if (keyframe.active() && false){
-		std::vector<synfigapp::ValueDesc> value_desc_list;
-		get_canvas_interface()->find_important_value_descs(value_desc_list);
-		while(!value_desc_list.empty())
+	if (keyframe.active()){
+		if (mode != synfig::KEYFRAMEMODE_NO_MOVE)
 		{
-			process_value_desc(value_desc_list.back());
-			value_desc_list.pop_back();
+			std::vector<synfigapp::ValueDesc> value_desc_list;
+			get_canvas_interface()->find_important_value_descs(value_desc_list);
+			while(!value_desc_list.empty())
+			{
+				process_value_desc(value_desc_list.back());
+				value_desc_list.pop_back();
+			}
 		}
 	}
 }

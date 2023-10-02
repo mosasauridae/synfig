@@ -81,6 +81,10 @@ Action::KeyframeDuplicate::get_param_vocab()
 		.set_local_name(_("Keyframe"))
 		.set_desc(_("Keyframe to be duplicated"))
 	);
+	ret.push_back(ParamDesc("mode",Param::TYPE_KEYFRAMEMODE)
+		.set_local_name(_("Mode"))
+		.set_desc(_("Keyframe mode"))
+	);
 
 	ret.push_back(ParamDesc("time",Param::TYPE_TIME)
 		.set_local_name(_("Time"))
@@ -120,6 +124,13 @@ Action::KeyframeDuplicate::set_param(const synfig::String& name, const Action::P
 
 		return true;
 	}
+	if(name=="mode" && param.get_type()==Param::TYPE_KEYFRAMEMODE)
+	{
+		mode=param.get_keyframe_mode();
+		mode_set=true;
+
+		return true;
+	}
 
 	return Action::CanvasSpecific::set_param(name,param);
 }
@@ -128,6 +139,8 @@ bool
 Action::KeyframeDuplicate::is_ready()const
 {
 	if(keyframe.get_time()==(Time::begin()-1) || new_keyframe.get_time()==(Time::begin()-1))
+		return false;
+	if(!mode_set)
 		return false;
 	return Action::CanvasSpecific::is_ready();
 }
@@ -160,14 +173,17 @@ Action::KeyframeDuplicate::prepare()
 	// If the times are different, then we
 	// will need to romp through the valuenodes
 	// and add actions to update their values.
-	if(new_time!=old_time)
+	if (mode != KEYFRAMEMODE_NO_MOVE)
 	{
-		std::vector<synfigapp::ValueDesc> value_desc_list;
-		get_canvas_interface()->find_important_value_descs(value_desc_list);
-		while(!value_desc_list.empty())
+		if(new_time!=old_time)
 		{
-			process_value_desc(value_desc_list.back());
-			value_desc_list.pop_back();
+			std::vector<synfigapp::ValueDesc> value_desc_list;
+			get_canvas_interface()->find_important_value_descs(value_desc_list);
+			while(!value_desc_list.empty())
+			{
+				process_value_desc(value_desc_list.back());
+				value_desc_list.pop_back();
+			}
 		}
 	}
 }
