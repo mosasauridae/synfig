@@ -73,6 +73,7 @@
 #include <gui/states/state_normal.h>
 #include <gui/widgets/widget_canvastimeslider.h>
 #include <gui/widgets/widget_interpolation.h>
+#include <gui/widgets/widget_keyframemode.h>
 #include <gui/workarea.h>
 
 #include <pangomm.h>
@@ -827,6 +828,18 @@ CanvasView::create_time_bar()
 	timetrack->attach(*widget_kf_list, 0, 2, 1, 1);
 	timetrack->hide();
 
+	// Keyframe Mode widget
+	widget_keyframemode = manage(new Widget_KeyframeMode(KEYFRAMEMODE_NO_MOVE));
+	widget_keyframemode->set_tooltip_text(_("Waypoint handling when moving/deleting/copying keyframes"));
+	widget_keyframemode->set_popup_fixed_width(false);
+	widget_keyframemode->set_hexpand(false);
+	widget_keyframemode->show();
+	widget_keyframemode->signal_changed().connect(sigc::mem_fun(*this, &CanvasView::on_keyframemode_changed));
+
+	synfigapp::Main::signal_keyframemode_changed().connect(sigc::mem_fun(*this, &CanvasView::keyframemode_refresh));
+	synfigapp::Main::set_keyframemode(KEYFRAMEMODE_NO_MOVE); // set default
+	keyframemode_refresh();
+
 	// Interpolation widget
 	widget_interpolation = manage(new Widget_Interpolation(Widget_Interpolation::SIDE_BOTH));
 	widget_interpolation->set_tooltip_text(_("Default Interpolation"));
@@ -971,6 +984,7 @@ CanvasView::create_time_bar()
 		controls->attach(*jackdial, left_pos++, 0, 1, 1);
 		controls->attach(*statusbar, left_pos++, 0, 1, 1);
 		controls->attach(*progressbar, left_pos++, 0, 1, 1);
+		controls->attach(*widget_keyframemode, left_pos++, 0, 1, 1);
 		controls->attach(*widget_interpolation, left_pos++, 0, 1, 1);
 		controls->attach(*keyframedial, left_pos++, 0, 1, 1);
 		controls->attach(*animatebutton, left_pos++, 0, 1, 1);
@@ -2973,6 +2987,7 @@ CanvasView::on_keyframe_remove_pressed()
 	action->set_param("canvas",get_canvas());
 	action->set_param("canvas_interface",canvas_interface());
 	action->set_param("keyframe",keyframe);
+	action->set_param("mode", synfigapp::Main::get_keyframemode());
 
 	canvas_interface()->get_instance()->perform_action(action);
 }
@@ -3045,6 +3060,7 @@ CanvasView::on_keyframe_description_set()
 		action->set_param("canvas",canvas_interface()->get_canvas());
 		action->set_param("canvas_interface",canvas_interface());
 		action->set_param("keyframe",keyframe);
+		action->set_param("mode", synfigapp::Main::get_keyframemode());
 
 		canvas_interface()->get_instance()->perform_action(action);
 
@@ -3638,6 +3654,14 @@ CanvasView::interpolation_refresh()
 void
 CanvasView::on_interpolation_changed()
 	{ synfigapp::Main::set_interpolation(Waypoint::Interpolation(widget_interpolation->get_value())); }
+
+void
+CanvasView::keyframemode_refresh()
+	{ widget_keyframemode->set_value(synfigapp::Main::get_keyframemode()); }
+
+void
+CanvasView::on_keyframemode_changed()
+	{ synfigapp::Main::set_keyframemode(KeyframeMode(widget_keyframemode->get_value())); }
 
 void 
 CanvasView::set_show_toolbars(bool show)

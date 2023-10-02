@@ -41,6 +41,7 @@
 #include <gui/localization.h>
 #include <gui/trees/keyframetree.h>
 #include <synfig/general.h>
+#include <synfigapp/main.h>
 
 #endif
 
@@ -219,6 +220,7 @@ KeyframeActionManager::refresh()
 		{
 			Keyframe keyframe((*keyframe_tree_->get_selection()->get_selected())[model.keyframe]);
 			param_list.add("keyframe",keyframe);
+			param_list.add("mode", synfigapp::Main::get_keyframemode());
 		}
 
 		etl::handle<studio::Instance>::cast_static(

@@ -45,6 +45,7 @@
 
 #include <synfigapp/action.h>
 #include <synfigapp/instance.h>
+#include <synfigapp/main.h>
 
 #endif
 
@@ -329,6 +330,7 @@ KeyframeTreeStore::set_value_impl(const Gtk::TreeModel::iterator& row, int colum
 			action->set_param("canvas",canvas_interface()->get_canvas());
 			action->set_param("canvas_interface",canvas_interface());
 			action->set_param("keyframe",keyframe);
+			action->set_param("mode", synfigapp::Main::get_keyframemode());
 
 			canvas_interface()->get_instance()->perform_action(action);
 		}
@@ -348,6 +350,7 @@ KeyframeTreeStore::set_value_impl(const Gtk::TreeModel::iterator& row, int colum
 			action->set_param("canvas",canvas_interface()->get_canvas());
 			action->set_param("canvas_interface",canvas_interface());
 			action->set_param("keyframe",keyframe);
+			action->set_param("mode", synfigapp::Main::get_keyframemode());
 
 			canvas_interface()->get_instance()->perform_action(action);
 		}
@@ -367,6 +370,7 @@ KeyframeTreeStore::set_value_impl(const Gtk::TreeModel::iterator& row, int colum
 			action->set_param("canvas",canvas_interface()->get_canvas());
 			action->set_param("canvas_interface",canvas_interface());
 			action->set_param("keyframe",keyframe);
+			action->set_param("mode", synfigapp::Main::get_keyframemode());
 
 			canvas_interface()->get_instance()->perform_action(action);
 		}

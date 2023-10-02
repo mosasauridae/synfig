@@ -46,6 +46,7 @@
 #include <synfig/valuenodes/valuenode_animated.h>
 #include <synfig/keyframe.h>
 #include <synfig/waypoint.h>
+#include <synfig/keyframemode.h>
 
 #include "editmode.h"
 
@@ -89,10 +90,11 @@ public:
 		TYPE_TIME,
 		TYPE_CANVASINTERFACE,
 		TYPE_EDITMODE,			// 16
+		TYPE_KEYFRAMEMODE,
 		TYPE_RENDDESC,
 		TYPE_INTERPOLATION,
 
-		TYPE_END				// 19
+		TYPE_END				// 20
 	};
 private:
 	Type type_ = TYPE_NIL;
@@ -116,6 +118,7 @@ private:
 		synfig::Real real_;
 		bool bool_;
 		EditMode edit_mode_;
+		synfig::KeyframeMode keyframe_mode_;
 		synfig::Interpolation interpolation_;
 	};
 public:
@@ -141,6 +144,7 @@ public:
 	Param(const synfigapp::ValueDesc& x);
 	Param(const int& x);
 	Param(const EditMode& x);
+	Param(const synfig::KeyframeMode& x);
 	Param(const synfig::Real& x);
 	Param(const synfig::Time& x);
 	Param(const bool& x);
@@ -170,6 +174,7 @@ public:
 	const synfig::RendDesc& get_rend_desc()const { assert(type_==TYPE_RENDDESC); return rend_desc_; }
 	int get_integer()const { assert(type_==TYPE_INTEGER); return integer_; }
 	EditMode get_edit_mode()const { assert(type_==TYPE_EDITMODE); return edit_mode_; }
+	synfig::KeyframeMode get_keyframe_mode()const { assert(type_==TYPE_KEYFRAMEMODE); return keyframe_mode_; }
 	bool get_bool()const { assert(type_==TYPE_BOOL); return bool_; }
 	const synfig::Interpolation& get_interpolation()const { assert(type_==TYPE_INTERPOLATION); return interpolation_; }
 

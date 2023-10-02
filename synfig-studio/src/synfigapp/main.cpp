@@ -91,8 +91,11 @@ sigc::signal<void> signal_fill_color_changed_;
 sigc::signal<void> signal_gradient_changed_;
 sigc::signal<void> signal_bline_width_changed_;
 sigc::signal<void> signal_interpolation_changed_;
+sigc::signal<void> signal_keyframemode_changed_;
 
 static synfig::Waypoint::Interpolation interpolation_;
+
+static synfig::KeyframeMode keyframemode_;
 
 /* === P R O C E D U R E S ================================================= */
 
@@ -191,6 +194,11 @@ sigc::signal<void>&
 synfigapp::Main::signal_interpolation_changed()
 {
 	return signal_interpolation_changed_;
+}
+
+sigc::signal<void> &synfigapp::Main::signal_keyframemode_changed()
+{
+	return signal_keyframemode_changed_;
 }
 
 const synfig::Color&
@@ -298,6 +306,20 @@ synfig::Waypoint::Interpolation
 synfigapp::Main::get_interpolation()
 {
 	return interpolation_;
+}
+
+KeyframeMode synfigapp::Main::get_keyframemode()
+{
+	return keyframemode_;
+}
+
+void synfigapp::Main::set_keyframemode(synfig::KeyframeMode x)
+{
+	if (keyframemode_ != x)
+	{
+		keyframemode_=x;
+		signal_keyframemode_changed()();
+	}
 }
 
 

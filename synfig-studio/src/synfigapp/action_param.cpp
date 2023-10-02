@@ -263,6 +263,13 @@ Param::Param(const EditMode& x):
 	edit_mode_ = x;
 }
 
+Param::Param(const synfig::KeyframeMode& x):
+	type_(TYPE_KEYFRAMEMODE)
+{
+	++ParamCounter::counter;
+	keyframe_mode_ = x;
+}
+
 Param::Param(const synfig::Real& x):
 
 	type_(TYPE_REAL)
@@ -344,6 +351,9 @@ void Param::set(const Param& rhs) {
 		case TYPE_EDITMODE:
 			edit_mode_ = rhs.edit_mode_;
 			break;
+		case TYPE_KEYFRAMEMODE:
+			keyframe_mode_ = rhs.keyframe_mode_;
+			break;
 		case TYPE_REAL:
 			real_ = rhs.real_;
 			break;
@@ -418,6 +428,7 @@ Param::clear()
 
 	case TYPE_NIL:
 	case TYPE_EDITMODE:
+	case TYPE_KEYFRAMEMODE:
 	case TYPE_INTEGER:
 	case TYPE_REAL:
 	case TYPE_BOOL:
