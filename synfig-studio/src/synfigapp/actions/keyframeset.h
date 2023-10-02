@@ -34,6 +34,7 @@
 #include <synfig/keyframe.h>
 #include <synfig/time.h>
 #include <synfig/guid.h>
+#include <synfig/keyframemode.h>
 #include <set>
 
 /* === M A C R O S ========================================================= */
@@ -53,6 +54,9 @@ class KeyframeSet :
 {
 private:
 
+	synfig::KeyframeMode mode;
+	bool mode_set = false;
+
 	synfig::Keyframe keyframe;
 	synfig::Keyframe old_keyframe;
 	synfig::Time old_time;
@@ -66,6 +70,9 @@ private:
 
 	int scale_activepoints(const synfigapp::ValueDesc& value_desc,const synfig::Time& old_begin,const synfig::Time& old_end,const synfig::Time& new_begin,const synfig::Time& new_end);
 	int scale_waypoints(const synfigapp::ValueDesc& value_desc,const synfig::Time& old_begin,const synfig::Time& old_end,const synfig::Time& new_begin,const synfig::Time& new_end);
+
+	bool isChanging(synfig::ValueNode_Animated::Handle value_node_desc);
+	bool isGhost(synfig::ValueNode_Animated::Handle value_node_desc);
 
 public:
 
