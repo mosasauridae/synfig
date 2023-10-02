@@ -35,6 +35,7 @@
 #include <synfig/distance.h>
 #include <synfig/real.h>
 #include <synfig/waypoint.h>
+#include <synfig/keyframemode.h>
 #include <sigc++/sigc++.h>
 #include "inputdevice.h"
 #include "settings.h"
@@ -71,8 +72,9 @@ public:
 	static const synfig::Gradient& get_gradient();
 	static const synfig::Distance& get_bline_width();
 	static synfig::Waypoint::Interpolation get_interpolation();
+	static synfig::KeyframeMode get_keyframemode();
 
-
+	static void set_keyframemode(synfig::KeyframeMode x);
 	static void set_interpolation(synfig::Waypoint::Interpolation x);
 	static void set_bline_width(synfig::Distance x);
 	static void set_outline_color(synfig::Color color);
@@ -88,6 +90,7 @@ public:
 	//static sigc::signal<void>& signal_blend_method_changed();
 	//static sigc::signal<void>& signal_opacity_changed();
 	static sigc::signal<void>& signal_interpolation_changed();
+	static sigc::signal<void>& signal_keyframemode_changed();
 
 	// Input Device stuff
 	static InputDevice::Handle add_input_device(synfig::String id, InputDevice::Type type = InputDevice::TYPE_MOUSE);

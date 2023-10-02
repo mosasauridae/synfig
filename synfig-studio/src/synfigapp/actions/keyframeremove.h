@@ -32,6 +32,7 @@
 
 #include <synfigapp/action.h>
 #include <synfig/keyframe.h>
+#include <synfig/keyframemode.h>
 
 /* === M A C R O S ========================================================= */
 
@@ -51,6 +52,9 @@ class KeyframeRemove :
 private:
 
 	synfig::Keyframe keyframe;
+
+	synfig::KeyframeMode mode;
+	bool mode_set = false;
 
 	void process_value_desc(const synfigapp::ValueDesc& value_desc);
 

@@ -32,6 +32,7 @@
 
 #include <synfigapp/action.h>
 #include <synfig/keyframe.h>
+#include <synfig/keyframemode.h>
 
 /* === M A C R O S ========================================================= */
 
@@ -49,6 +50,8 @@ class KeyframeDuplicate :
 	public Super
 {
 private:
+	synfig::KeyframeMode mode;
+	bool mode_set = false;
 
 	synfig::Keyframe keyframe;
 	synfig::Keyframe new_keyframe;

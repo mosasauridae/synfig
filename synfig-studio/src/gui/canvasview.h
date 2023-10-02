@@ -285,6 +285,7 @@ private:
 	Gtk::Grid *timebar;
 	Gtk::Toolbar *top_toolbar;
 	Gtk::Toolbar *right_toolbar;
+	Widget_Enum *widget_keyframemode;
 	Widget_Enum *widget_interpolation;
 	Gtk::ToggleButton *animatebutton;
 	Gtk::ToggleButton *timetrackbutton;
@@ -481,6 +482,9 @@ private:
 
 	void interpolation_refresh();
 	void on_interpolation_changed();
+
+	void keyframemode_refresh();
+	void on_keyframemode_changed();
 
 	//helper function for import_file()
 	bool is_same_file(const synfig::filesystem::Path& filename);

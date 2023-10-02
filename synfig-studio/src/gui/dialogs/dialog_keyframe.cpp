@@ -41,6 +41,7 @@
 
 #include <synfigapp/action.h>
 #include <synfigapp/instance.h>
+#include <synfigapp/main.h>
 
 #endif
 
@@ -152,6 +153,7 @@ Dialog_Keyframe::on_delete_pressed()
 	action->set_param("canvas_interface",canvas_interface);
 	action->set_param("keyframe",keyframe_);
 	action->set_param("model",widget_waypoint_model->get_waypoint_model());
+	action->set_param("mode", synfigapp::Main::get_keyframemode());
 
 	if(canvas_interface->get_instance()->perform_action(action))
 	{
@@ -174,6 +176,7 @@ Dialog_Keyframe::on_apply_pressed()
 		action->set_param("canvas",canvas_interface->get_canvas());
 		action->set_param("canvas_interface",canvas_interface);
 		action->set_param("keyframe",keyframe_);
+		action->set_param("mode", synfigapp::Main::get_keyframemode());
 
 		if(!canvas_interface->get_instance()->perform_action(action))
 		{
