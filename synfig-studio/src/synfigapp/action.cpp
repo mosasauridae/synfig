@@ -107,6 +107,7 @@
 #include "actions/valuedescbonesetparent.h"
 #include "actions/vectorization.h"
 #include "actions/waypointadd.h"
+#include "actions/waypointaddmultiple.h"
 #include "actions/waypointset.h"
 #include "actions/waypointsetsmart.h"
 #include "actions/waypointremove.h"
@@ -271,6 +272,7 @@ Action::Main::Main()
 	ADD_ACTION(Action::ValueDescBake);
 	ADD_ACTION(Action::Vectorization);
 	ADD_ACTION(Action::WaypointAdd);
+	ADD_ACTION(Action::WaypointAddMultiple);
 	ADD_ACTION(Action::WaypointSet);
 	ADD_ACTION(Action::WaypointSetSmart);
 	ADD_ACTION(Action::WaypointRemove);
