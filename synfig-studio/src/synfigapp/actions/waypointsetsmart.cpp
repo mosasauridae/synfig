@@ -116,6 +116,7 @@ Action::WaypointSetSmart::get_param_vocab()
 bool
 Action::WaypointSetSmart::is_candidate(const ParamList &x)
 {
+
 	return (candidate_check(get_param_vocab(),x) &&
 			// We need either a waypoint or a time.
 			(x.count("waypoint") || x.count("time")) &&
@@ -141,8 +142,8 @@ Action::WaypointSetSmart::set_param(const synfig::String& name, const Action::Pa
 
 	if(name=="value_desc" && param.get_type()==Param::TYPE_VALUEDESC)
 	{
-		if(param.get_value_desc().is_value_node())
-			return false;
+//		if(param.get_value_desc().is_value_node())
+//			return false;
 
 		value_desc=param.get_value_desc();
 		return true;
