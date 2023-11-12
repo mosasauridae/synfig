@@ -2930,6 +2930,7 @@ CanvasView::on_keyframe_add_pressed()
 	action->set_param("canvas",get_canvas());
 	action->set_param("canvas_interface",canvas_interface());
 	action->set_param("keyframe",Keyframe(get_time()));
+    action->set_param("mode",synfigapp::Main::get_keyframemode());
 
 	canvas_interface()->get_instance()->perform_action(action);
 }
@@ -2959,6 +2960,7 @@ CanvasView::on_keyframe_duplicate_pressed()
 	action->set_param("canvas_interface",canvas_interface());
 	action->set_param("keyframe",keyframe);
 	action->set_param("time",get_time());
+    action->set_param("mode",synfigapp::Main::get_keyframemode());
 
 	canvas_interface()->get_instance()->perform_action(action);
 }
@@ -3060,7 +3062,7 @@ CanvasView::on_keyframe_description_set()
 		action->set_param("canvas",canvas_interface()->get_canvas());
 		action->set_param("canvas_interface",canvas_interface());
 		action->set_param("keyframe",keyframe);
-		action->set_param("mode", synfigapp::Main::get_keyframemode());
+        action->set_param("mode",synfigapp::Main::get_keyframemode());
 
 		canvas_interface()->get_instance()->perform_action(action);
 
