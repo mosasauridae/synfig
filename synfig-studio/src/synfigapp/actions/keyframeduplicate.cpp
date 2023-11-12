@@ -105,13 +105,10 @@ Action::KeyframeDuplicate::set_param(const synfig::String& name, const Action::P
 	if(name=="keyframe" && param.get_type()==Param::TYPE_KEYFRAME)
 	{
 		keyframe=param.get_keyframe();
-		new_keyframe.set_description(keyframe.get_description()+_(" (Duplicate)"));
 
-		//! TODO add and use keyframe::operator=
+        if (!keyframe.get_description().empty())
+            new_keyframe.set_description(keyframe.get_description()+_(" (Duplicate)"));
 
-		//! Copy the kf's Waypoint::model is exist
-		if(keyframe.has_model())
-		    new_keyframe.apply_model(keyframe.get_waypoint_model());
 		//! Copy the active status
 		new_keyframe.set_active(keyframe.active());
 		new_keyframe.set_set(keyframe.get_set());
@@ -149,6 +146,11 @@ void
 Action::KeyframeDuplicate::prepare()
 {
 	clear();
+
+    //! Copy the kf's Waypoint::model is exist
+    if(mode != synfig::KEYFRAMEMODE_NO_MOVE && keyframe.has_model()) {
+        new_keyframe.apply_model(keyframe.get_waypoint_model());
+    }
 
 	const synfig::Time old_time=keyframe.get_time();
 	const synfig::Time new_time=new_keyframe.get_time();
