@@ -270,6 +270,14 @@ Action::KeyframeSet::scale_waypoints(const synfigapp::ValueDesc& value_desc,cons
 
 bool KeyframeSet::isChanging(synfig::ValueNode_Animated::Handle value_node_desc)
 {
+	// if there's a keyframe of any kind at the current time, it counts
+	try {
+		value_node_desc->find(old_time);
+		return true;
+	}
+	catch(...)
+	{}
+
 	// if prev/next node doesn't exist or is constant, it's not changing
 	try {
 		auto next = value_node_desc->find_next(new_time);
@@ -278,6 +286,9 @@ bool KeyframeSet::isChanging(synfig::ValueNode_Animated::Handle value_node_desc)
 
 		auto prev = value_node_desc->find_prev(new_time);
 		if (prev->get_after() == INTERPOLATION_CONSTANT)
+			return false;
+
+		if (next->get_time() > keyframe_next && prev->get_time() < keyframe_prev)
 			return false;
 	}
 	catch(...) {
@@ -378,37 +389,40 @@ Action::KeyframeSet::process_value_desc(const synfigapp::ValueDesc& value_desc)
 			//else
 			{
 				ValueNode_Animated::Handle value_node_animated(ValueNode_Animated::Handle::cast_dynamic(value_node));
-
-				Action::Handle action(WaypointSetSmart::create());
-
-				action->set_param("canvas",get_canvas());
-				action->set_param("canvas_interface",get_canvas_interface());
-				action->set_param("value_node",ValueNode::Handle(value_node_animated));
-
-				Waypoint waypoint;
-				try
+				if (isChanging(value_node_animated))
 				{
-					waypoint=*value_node_animated->find(old_time);
-					waypoint.set_time(new_time);
+
+					Action::Handle action(WaypointSetSmart::create());
+
+					action->set_param("canvas",get_canvas());
+					action->set_param("canvas_interface",get_canvas_interface());
+					action->set_param("value_node",ValueNode::Handle(value_node_animated));
+
+					Waypoint waypoint;
+					try
+					{
+						waypoint=*value_node_animated->find(old_time);
+						waypoint.set_time(new_time);
+					}
+					catch(...)
+					{
+						if (mode==KEYFRAMEMODE_MOVE_ONLY)
+							return;
+
+						waypoint.set_time(new_time);
+						waypoint.set_value((*value_node_animated)(old_time));
+						waypoint.set_before(synfigapp::Main::get_interpolation());
+						waypoint.set_after(synfigapp::Main::get_interpolation());
+						waypoint.set_ghost(isGhost(value_node_animated));
+					}
+					action->set_param("waypoint",waypoint);
+
+					assert(action->is_ready());
+					if(!action->is_ready())
+						throw Error(Error::TYPE_NOTREADY);
+
+					add_action_front(action);
 				}
-				catch(...)
-				{
-					if (mode==KEYFRAMEMODE_MOVE_ONLY || !isChanging(value_node_animated))
-						return;
-
-					waypoint.set_time(new_time);
-					waypoint.set_value((*value_node_animated)(old_time));
-					waypoint.set_before(synfigapp::Main::get_interpolation());
-					waypoint.set_after(synfigapp::Main::get_interpolation());
-					waypoint.set_ghost(isGhost(value_node_animated));
-				}
-				action->set_param("waypoint",waypoint);
-
-				assert(action->is_ready());
-				if(!action->is_ready())
-					throw Error(Error::TYPE_NOTREADY);
-
-				add_action_front(action);
 			}
 		}
 	}
