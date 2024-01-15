@@ -193,6 +193,7 @@ set(ICONS
 	parameters_icon
 	preview_options_icon
 	background_rendering_icon
+	render_now_icon
 	rename_icon
 	render_options_icon
 	reset_colors_icon
