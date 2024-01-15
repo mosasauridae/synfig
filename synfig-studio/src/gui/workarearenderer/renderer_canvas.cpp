@@ -592,6 +592,7 @@ Renderer_Canvas::enqueue_render()
 		String         renderer_name  = get_work_area()->get_renderer();
 		RectInt        window_rect    = get_work_area()->get_window_rect();
 		bool           bg_rendering   = get_work_area()->get_background_rendering();
+		bool           render_now     = get_work_area()->get_render_now();
 		Canvas::Handle canvas         = get_work_area()->get_canvas();
 		CanvasView::Handle canvas_view = get_work_area()->get_canvas_view();
 		etl::handle<TimeModel> time_model = canvas_view->time_model();
@@ -631,7 +632,7 @@ Renderer_Canvas::enqueue_render()
 				bool time_in_repeat_range = time_model->get_time() >= time_model->get_play_bounds_lower()
 						                 && time_model->get_time() <= time_model->get_play_bounds_upper();
 				
-				while(is_playing && bg_rendering && enqueued_tasks < max_tasks && tiles_size + frame_size < max_tiles_size_soft)
+				while(((is_playing && bg_rendering) || render_now) && enqueued_tasks < max_tasks && tiles_size + frame_size < max_tiles_size_soft)
 				{
 					Time future_time = current_frame.time + frame_duration*future;
 					bool future_exists = future_time >= time_model->get_lower()
@@ -695,6 +696,8 @@ Renderer_Canvas::enqueue_render()
 
 				if(enqueued)
 					get_work_area()->signal_rendering()();
+				else
+					get_work_area()->set_render_now(false);
 			}
 		}
 	}
@@ -738,7 +741,10 @@ Renderer_Canvas::clear_render()
 	}
 	rendering::Renderer::cancel(events);
 	if (cleared && get_work_area())
+	{
+		get_work_area()->set_render_now(false);
 		get_work_area()->signal_rendering()();
+	}
 }
 
 Renderer_Canvas::FrameStatus
