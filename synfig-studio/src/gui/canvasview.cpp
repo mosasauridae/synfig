@@ -1146,6 +1146,18 @@ CanvasView::create_top_toolbar()
 		top_toolbar->append(*background_rendering_button);
 	}
 
+	{ // Render now button
+		render_now_button = Gtk::manage(new Gtk::ToolButton());
+		render_now_button->set_icon_name("render_now_icon");
+		render_now_button->signal_clicked().connect(
+			sigc::mem_fun(*this, &CanvasView::start_background_rendering));
+		render_now_button->set_label(_("Render now"));
+		render_now_button->set_tooltip_text(_("Start rendering past and future frames now, until all frames are rendered or something is changed"));
+		render_now_button->show();
+
+		top_toolbar->append(*render_now_button);
+	}
+
 	// Separator
 	top_toolbar->append(*create_tool_separator());
 
@@ -2456,6 +2468,11 @@ CanvasView::toggle_background_rendering()
 	// Update the toggle background rendering button
 	background_rendering_button->set_active(work_area->get_background_rendering());
 	toggling_background_rendering=false;
+}
+
+void CanvasView::start_background_rendering()
+{
+	work_area->set_render_now(!work_area->get_render_now());
 }
 
 void
