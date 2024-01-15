@@ -280,6 +280,7 @@ private:
 	Gtk::Button *closebutton;
 	Gtk::Button *stopbutton;
 	Gtk::ToggleToolButton *background_rendering_button;
+	Gtk::ToolButton *render_now_button;
 	Gtk::ToolButton *refreshbutton;
 	Gtk::ComboBoxText *render_combobox;
 	Gtk::Grid *timebar;
@@ -474,6 +475,8 @@ private:
 	void toggle_onion_skin();
 	void toggle_onion_skin_keyframes();
 	void toggle_background_rendering();
+
+	void start_background_rendering();
 
 	void toggle_animatebutton();
 	void toggle_timetrackbutton();

@@ -229,6 +229,8 @@ private:
 	// render future and past frames in background
 	bool background_rendering;
 
+	bool render_now = false;
+
 	synfig::ValueNode::LooseHandle selected_value_node_;
 
 	bool allow_duck_clicks;
@@ -336,6 +338,9 @@ public:
 
 	void set_background_rendering(bool x);
 	bool get_background_rendering() const { return background_rendering; }
+
+	void set_render_now(bool x);
+	bool get_render_now() const { return render_now; }
 
 	void set_selected_value_node(synfig::ValueNode::LooseHandle x);
 
