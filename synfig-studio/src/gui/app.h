@@ -275,6 +275,7 @@ public:
 	static sigc::signal<void> &signal_present_all();
 
 	static sigc::signal<void> &signal_recent_files_changed();
+	static sigc::signal<void> &signal_recent_paths_changed();
 
 	static sigc::signal<
 		void,
@@ -334,6 +335,7 @@ public:
 	static Glib::RefPtr<UIManager>& ui_manager() { return ui_manager_; }
 
 	static void add_recent_file(const etl::handle<Instance> instance);
+	static void add_recent_path(const synfig::filesystem::Path& filename);
 
 	static Gtk::Box* scale_imported_box();
 
@@ -345,6 +347,7 @@ public:
 	/// \param[out] map Maps AccelKey to Action
 	static const std::map<const char*, const char*>& get_default_accel_map();
 	static void load_recent_files();
+	static void load_recent_paths();
 	static void load_language_settings();
 	static void apply_gtk_settings();
 
@@ -355,6 +358,7 @@ public:
 	static void set_icon_theme(const std::string &theme_name);
 
 	static const std::list<synfig::filesystem::Path>& get_recent_files();
+	static const std::list<synfig::filesystem::Path>& get_recent_paths();
 
 	static const etl::handle<synfigapp::UIInterface>& get_ui_interface();
 
