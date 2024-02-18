@@ -40,6 +40,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <libxml/parser.h>
 
 #include <iostream>
 #include <map>
@@ -3549,6 +3550,7 @@ CanvasParser::parse_from_file_as(const FileSystem::Identifier &identifier,const 
 				stream = FileSystem::ReadStream::Handle(new ZReadStream(stream, zstreambuf::compression::gzip));
 
 			xmlpp::DomParser parser;
+			parser.set_parser_options(XML_PARSE_HUGE | XML_PARSE_BIG_LINES);
 			parser.parse_stream(*stream);
 			stream.reset();
 			if(parser)
