@@ -1053,7 +1053,7 @@ synfig::save_canvas(const FileSystem::Identifier &identifier, Canvas::ConstHandl
 		if (identifier.filename.extension().u8string() == ".sifz")
 			stream = FileSystem::WriteStream::Handle(new ZWriteStream(stream));
 
-		document.write_to_stream_formatted(*stream, "UTF-8");
+		document.write_to_stream(*stream, "UTF-8");
 
 		// close stream
 		stream.reset();
