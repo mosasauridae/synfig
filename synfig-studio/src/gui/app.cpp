@@ -213,6 +213,9 @@ App::signal_instance_deleted() { return signal_instance_deleted_; }
 static std::list<synfig::filesystem::Path> recent_files;
 const std::list<synfig::filesystem::Path>& App::get_recent_files() { return recent_files; }
 
+static std::list<synfig::filesystem::Path> recent_paths;
+const std::list<synfig::filesystem::Path>& App::get_recent_paths() { return recent_files; }
+
 int	 App::Busy::count;
 bool App::shutdown_in_progress;
 
@@ -1691,6 +1694,7 @@ void App::init(const synfig::String& rootpath)
 		if (!load_settings("workspace.layout"))
 			MainWindow::set_workspace_default();
 		load_recent_files();
+		load_recent_paths();
 
 		// Init Tools must be done after load_accel_map() : accelerators keys
 		// are displayed in toolbox labels
@@ -1873,6 +1877,36 @@ App::add_recent_file(const etl::handle<Instance> instance)
 	add_recent_file(filesystem::absolute(instance->get_file_name()), true);
 }
 
+void App::add_recent_path(const synfig::filesystem::Path &file_name)
+{
+	filesystem::Path filename(file_name.cleanup());
+
+	assert(!filename.empty());
+
+	if(filename.empty())
+		return;
+
+	// If we aren't an absolute path, turn ourselves into one
+	filename = filesystem::absolute(filename);
+
+	// Check to see if the file is already on the list.
+	// If it is, then remove it from the list
+	for (auto iter = recent_paths.begin(); iter != recent_paths.end(); ++iter) {
+		if (*iter == filename) {
+			recent_paths.erase(iter);
+			break;
+		}
+	}
+
+	recent_paths.push_back(filename);
+
+	// Clean out the files at the end of the list.
+	while(recent_paths.size()>(unsigned)get_max_recent_files())
+	{
+		recent_paths.pop_back();
+	}
+}
+
 void
 App::add_recent_file(const synfig::filesystem::Path& file_name, bool emit_signal = true)
 {
@@ -1998,6 +2032,20 @@ App::save_settings()
 			for (auto r_iter = recent_files.rbegin(); r_iter != recent_files.rend(); ++r_iter)
 				file << r_iter->u8string() << std::endl;
 		} while (false);
+		do{
+			filesystem::Path filename = get_config_file("recentpaths");
+
+			std::ofstream file(filename.c_str());
+
+			if(!file)
+			{
+				synfig::warning("Unable to save %s", filename.u8_str());
+				break;
+			}
+
+			for (auto r_iter = recent_paths.rbegin(); r_iter != recent_paths.rend(); ++r_iter)
+				file << r_iter->u8string() << std::endl;
+		} while (false);
 		filesystem::Path filename = get_config_file("settings-1.4");
 		synfigapp::Main::settings().save_to_file(filename);
 
@@ -2077,6 +2125,28 @@ App::load_recent_files()
 	catch(...)
 	{
 		synfig::warning("Caught exception when attempting to load recent file list.");
+	}
+}
+
+void
+App::load_recent_paths()
+{
+	try
+	{
+		filesystem::Path filename = get_config_file("recentpaths");
+		std::ifstream file(filename.c_str());
+
+		while(file)
+		{
+			std::string recent_path;
+			getline(file,recent_path);
+			if(!recent_path.empty() && FileSystemNative::instance()->is_directory(recent_path))
+				add_recent_path(recent_path);
+		}
+	}
+	catch(...)
+	{
+		synfig::warning("Caught exception when attempting to load recent path list.");
 	}
 }
 
@@ -2766,6 +2836,9 @@ App::dialog_open_folder(const std::string& title, filesystem::Path& foldername, 
 	dialog->add_button(_("Cancel"), Gtk::RESPONSE_CANCEL)->set_image_from_icon_name("gtk-cancel", Gtk::ICON_SIZE_BUTTON);
 	dialog->add_button(_("Open"),   Gtk::RESPONSE_ACCEPT)->set_image_from_icon_name("gtk-open", Gtk::ICON_SIZE_BUTTON);
 
+	for (const auto& path : recent_paths)
+		dialog->add_shortcut_folder(path.u8string());
+
 	if(dialog->run() == Gtk::RESPONSE_ACCEPT)
 	{
 		foldername = dialog->get_filename();
@@ -2788,6 +2861,9 @@ create_dialog_save_file(const std::string& title, const filesystem::Path& filena
 
 	for (const auto& filter : filters)
 		dialog->add_filter(filter);
+
+	for (const auto& path : recent_paths)
+		dialog->add_shortcut_folder(path.u8string());
 
 	filesystem::Path full_path = prev_path;
 	if (!filename.empty())
@@ -2938,6 +3014,8 @@ App::dialog_save_file(const std::string& title, synfig::filesystem::Path& filena
 		// dialog->property_filter().signal_changed().connect(sigc::mem_fun(*this, &App::on_save_dialog_filter_changed));
 		filename = dialog->get_filename();
 
+		add_recent_path(dialog->get_file()->get_parent()->get_path());
+
 		auto filter_iter = filter_map.find(filename.extension().u8string());
 
 		// No known extension; get it from the selected filter
@@ -3038,6 +3116,8 @@ App::dialog_save_file_spal(const std::string& title, synfig::filesystem::Path& f
 		if (filename.extension().u8string() != ".spal")
 			filename = dialog->get_filename() + ".spal";
 
+		add_recent_path(dialog->get_file()->get_parent()->get_path());
+
 		return true;
 	}
 
@@ -3065,6 +3145,8 @@ App::dialog_save_file_sketch(const std::string& title, synfig::filesystem::Path&
 		if (filename.extension().u8string() != ".sketch")
 			filename = dialog->get_filename() + ".sketch";
 
+		add_recent_path(dialog->get_file()->get_parent()->get_path());
+
 		return true;
 	}
 
@@ -3082,6 +3164,8 @@ App::dialog_save_file_render(const std::string& title, filesystem::Path& filenam
 	if(dialog->run() == Gtk::RESPONSE_ACCEPT)
 	{
 		filename = dialog->get_filename();
+
+		add_recent_path(dialog->get_file()->get_parent()->get_path());
 
 		return true;
 	}
