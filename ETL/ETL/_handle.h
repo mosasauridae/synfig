@@ -83,8 +83,7 @@ public:
 	//! Returns \c false if object needs to be deleted
 	virtual void unref() const
 	{
-		--refcount;
-		if (refcount == 0)
+		if (--refcount == 0)
 			delete this;
 	}
 
