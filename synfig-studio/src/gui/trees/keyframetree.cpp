@@ -108,7 +108,7 @@ KeyframeTree::KeyframeTree() : editable_(false)
 		Gtk::CellRendererText* cell_renderer_jump=Gtk::manage(new Gtk::CellRendererText());
 		column->pack_start(*cell_renderer_jump,true);
 		cell_renderer_jump->property_text()=_("(JMP)");
-		cell_renderer_jump->property_foreground()="#003a7f";
+		cell_renderer_jump->property_foreground()=(App::use_dark_theme ? "#2486f9" : "#003a7f");
 
 		column->set_reorderable();
 		column->set_resizable();
