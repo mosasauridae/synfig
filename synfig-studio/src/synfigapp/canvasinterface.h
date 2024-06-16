@@ -270,6 +270,14 @@ public:
 	//! Changes the current time to the next keyframe
 	void jump_to_prev_keyframe();
 
+	//! Changes the current time to the next waypoint
+	void jump_to_next_waypoint(synfig::ValueNode::Handle v);
+
+	//! Changes the current time to the previous waypoint
+	void jump_to_prev_waypoint(synfig::ValueNode::Handle v);
+
+	void jump_to_waypoint(synfig::ValueNode::Handle v, bool forward);
+
 	void seek_frame(int frames);
 
 	void seek_time(synfig::Time time);

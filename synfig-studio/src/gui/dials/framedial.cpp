@@ -57,12 +57,14 @@ using namespace studio;
 
 FrameDial::FrameDial():
 	seek_begin         (create_button("animate_seek_begin_icon"         , _("Seek to begin")            )),
+	seek_prev_waypoint (create_button("animate_seek_prev_waypoint_icon" , _("Seek to previous waypoint"))),
 	seek_prev_keyframe (create_button("animate_seek_prev_keyframe_icon" , _("Seek to previous keyframe"))),
 	seek_prev_frame    (create_button("animate_seek_prev_frame_icon"    , _("Seek to previous frame")   )),
 	play               (create_button("animate_play_icon"               , _("Play")                     )),
 	pause              (create_button("animate_pause_icon"              , _("Pause")                    )),
 	seek_next_frame    (create_button("animate_seek_next_frame_icon"    , _("Seek to next frame")       )),
 	seek_next_keyframe (create_button("animate_seek_next_keyframe_icon" , _("Seek to next keyframe")    )),
+	seek_next_waypoint (create_button("animate_seek_next_waypoint_icon" , _("Seek to next waypoint")    )),
 	seek_end           (create_button("animate_seek_end_icon"           , _("Seek to end")              )),
 	end_time           (create_end_time_entry(                              _("End Time")                 )),
 	repeat             (create_toggle("animate_loop_icon"               , _("Loop")                     , true)),
