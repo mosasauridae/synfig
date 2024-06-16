@@ -997,6 +997,8 @@ DEFINE_ACTION("play", _("Play"))
 // icon. the internal code is still using stop.
 DEFINE_ACTION("pause", _("Pause"))
 
+DEFINE_ACTION("jump-next-waypoint", _("Seek to Next Waypoint"))
+DEFINE_ACTION("jump-prev-waypoint", _("Seek to previous Waypoint"))
 DEFINE_ACTION("jump-next-keyframe", _("Seek to Next Keyframe"))
 DEFINE_ACTION("jump-prev-keyframe", _("Seek to previous Keyframe"))
 DEFINE_ACTION("seek-next-frame",    _("Seek to Next Frame"))
@@ -1240,6 +1242,8 @@ DEFINE_ACTION("switch-to-rightmost-tab",  _("Switch to Rightmost Tab"))
 "		<menuitem action='play'/>"
 "		<menuitem action='pause'/>"
 "		<separator name='sep-view1'/>"
+"		<menuitem action='jump-prev-waypoint'/>"
+"		<menuitem action='jump-next-waypoint'/>"
 "		<menuitem action='jump-prev-keyframe'/>"
 "		<menuitem action='jump-next-keyframe'/>"
 "		<menuitem action='seek-prev-frame'/>"
@@ -1392,6 +1396,8 @@ App::get_default_accel_map()
 		{"0",                       "<Actions>/canvasview/canvas-zoom-fit"},
 		{"<Control>plus",           "<Actions>/canvasview/time-zoom-in"},
 		{"<Control>underscore",     "<Actions>/canvasview/time-zoom-out"},
+		{"<Control>bracketleft",    "<Actions>/canvasview/jump-prev-waypoint"},
+		{"<Control>bracketright",   "<Actions>/canvasview/jump-next-waypoint"},
 		{"bracketleft",             "<Actions>/canvasview/jump-prev-keyframe"},
 		{"bracketright",            "<Actions>/canvasview/jump-next-keyframe"},
 		{"comma",                   "<Actions>/canvasview/seek-prev-frame"},

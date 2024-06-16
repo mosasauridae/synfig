@@ -34,6 +34,9 @@ set(IMG_SOURCE_animate_bounds_icon framedial_icons 10)
 set(IMG_SOURCE_animate_bound_lower_icon framedial_icons 11)
 set(IMG_SOURCE_animate_bound_upper_icon framedial_icons 12)
 
+set(IMG_SOURCE_animate_seek_next_waypoint_icon framedial_waypoint_icons 0)
+set(IMG_SOURCE_animate_seek_prev_waypoint_icon framedial_waypoint_icons 1)
+
 set(IMG_SOURCE_keyframe_lock_past_on_icon keyframe_lock_icons 0)
 set(IMG_SOURCE_keyframe_lock_past_off_icon keyframe_lock_icons 1)
 set(IMG_SOURCE_keyframe_lock_future_on_icon keyframe_lock_icons 2)
@@ -66,6 +69,8 @@ set(ICONS
 
 	canvas_icon
 
+	animate_seek_next_waypoint_icon
+	animate_seek_prev_waypoint_icon
 	animate_seek_next_keyframe_icon
 	animate_seek_prev_keyframe_icon
 	animate_seek_next_frame_icon
