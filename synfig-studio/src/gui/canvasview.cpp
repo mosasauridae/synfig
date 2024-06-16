@@ -896,6 +896,9 @@ CanvasView::create_time_bar()
 	//Setup end time widget
 	framedial->set_end_time(get_canvas()->rend_desc().get_frame_rate(), get_canvas()->rend_desc().get_time_end());
 
+	framedial->signal_seek_prev_waypoint().connect(sigc::mem_fun(*this, &CanvasView::on_seek_prev_waypoint));
+	framedial->signal_seek_next_waypoint().connect(sigc::mem_fun(*this, &CanvasView::on_seek_next_waypoint));
+
 	framedial->signal_seek_begin().connect(
 		sigc::mem_fun(*this, &CanvasView::on_seek_begin_pressed) );
 	framedial->signal_seek_prev_keyframe().connect(
@@ -1445,6 +1448,9 @@ CanvasView::init_menus()
 
 		{"jump-next-keyframe", "animate_seek_next_keyframe_icon", N_("Seek to Next Keyframe"),      "", sigc::mem_fun(*canvas_interface(), &CanvasInterface::jump_to_next_keyframe) },
 		{"jump-prev-keyframe", "animate_seek_prev_keyframe_icon", N_("Seek to Previous Keyframe") , "", sigc::mem_fun(*canvas_interface(), &CanvasInterface::jump_to_prev_keyframe) },
+
+		{"jump-next-waypoint", "animate_seek_next_waypoint_icon", N_("Seek to Next Waypoint"),      "", sigc::mem_fun(*this, &CanvasView::on_seek_next_waypoint) },
+		{"jump-prev-waypoint", "animate_seek_prev_waypoint_icon", N_("Seek to Previous Waypoint") , "", sigc::mem_fun(*this, &CanvasView::on_seek_prev_waypoint) },
 
 	};
 
@@ -2049,8 +2055,22 @@ CanvasView::refresh_time_window()
 
 void
 CanvasView::on_interface_time_changed()
-	{ time_model()->set_time(canvas_interface_->get_time()); 
+{ time_model()->set_time(canvas_interface_->get_time());
 	time_model()->make_visible(canvas_interface_->get_time()); }
+
+void CanvasView::on_seek_prev_waypoint()
+{
+	auto v = get_work_area()->get_selected_value_node();
+	if (v)
+		canvas_interface()->jump_to_prev_waypoint(v);
+}
+
+void CanvasView::on_seek_next_waypoint()
+{
+	auto v = get_work_area()->get_selected_value_node();
+	if (v)
+		canvas_interface()->jump_to_next_waypoint(v);
+}
 
 void
 CanvasView::time_zoom_in()

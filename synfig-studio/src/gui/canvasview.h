@@ -672,6 +672,8 @@ protected:
 	void on_refresh_pressed();
 	void on_id_changed();
 	void on_interface_time_changed();
+	void on_seek_prev_waypoint();
+	void on_seek_next_waypoint();
 	void on_keyframe_add_pressed();
 	void on_keyframe_duplicate_pressed();
 	void on_keyframe_remove_pressed();
