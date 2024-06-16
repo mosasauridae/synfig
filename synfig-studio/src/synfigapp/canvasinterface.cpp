@@ -705,6 +705,87 @@ CanvasInterface::jump_to_prev_keyframe()
 	//catch(...) { synfig::warning("Unable to find prev keyframe"); }
 }
 
+static const Node::time_set empty_time_set {};
+const Node::time_set& get_times_from_valuedesc(const ValueDesc &v)
+{
+	if (v.get_value_type() == type_canvas && !getenv("SYNFIG_SHOW_CANVAS_PARAM_WAYPOINTS"))
+		if(Canvas::Handle canvasparam = v.get_value().get(Canvas::Handle()))
+			return canvasparam->get_times();
+
+	//we want a dynamic list entry to override the normal...
+	if (v.parent_is_value_node())
+		if (ValueNode_DynamicList *parent_value_node = dynamic_cast<ValueNode_DynamicList *>(v.get_parent_value_node().get()))
+			return parent_value_node->list[v.get_index()].get_times();
+
+	if (ValueNode *base_value = v.get_value_node().get()) //don't render stuff if it's just animated...
+		return base_value->get_times();
+
+	return empty_time_set;
+}
+
+void CanvasInterface::jump_to_waypoint(ValueNode::Handle v, bool forward)
+{
+	const Node::time_set & time_set = v->get_times();
+
+	if (!time_set.empty())
+	{
+		std::vector<synfig::TimePoint> time_vector;
+		time_vector.insert(time_vector.end(), time_set.begin(), time_set.end());
+
+		TimePoint now = get_time();
+		if ((now.get_time() <= time_vector[0].get_time() && !forward) ||
+			(now.get_time() >= time_vector.rbegin()->get_time() && forward))
+		{
+			synfig::info("No waypoints in direction");
+			return;
+		}
+
+		TimePoint dest;
+
+		if (now.get_time() > time_vector.rbegin()->get_time() && !forward)
+		{
+			dest = *time_vector.rbegin();
+		}
+		else if (now.get_time() < time_vector[0].get_time() && forward)
+		{
+			dest = time_vector[0];
+		}
+		else
+		{
+			for (size_t i = 0; i < time_vector.size() - 1; i++)
+			{
+				if ((time_vector[i].get_time() < now.get_time() && now.get_time() < time_vector[i+1].get_time()) ||
+					(forward && now.get_time() == time_vector[i].get_time()) ||
+					(!forward && now.get_time() == time_vector[i+1].get_time()))
+				{
+					dest = forward ? time_vector[i+1] : time_vector[i];
+					break;
+				}
+			}
+		}
+
+		set_time(dest.get_time());
+
+	}
+	else
+	{
+		synfig::info("No value selected");
+	}
+}
+
+void
+CanvasInterface::jump_to_next_waypoint(ValueNode::Handle v)
+{
+	jump_to_waypoint(v, true);
+}
+
+void
+CanvasInterface::jump_to_prev_waypoint(ValueNode::Handle v)
+{
+	jump_to_waypoint(v, false);
+}
+
+
 static void update_layer_size(const RendDesc& rend_desc, Layer::Handle& layer, bool resize_image) {
 	int w = layer->get_param("_width").get(int());
 	int h = layer->get_param("_height").get(int());
