@@ -51,12 +51,14 @@ class FrameDial : public Gtk::Grid
 {
 private:
 	Gtk::Button *seek_begin;
+	Gtk::Button *seek_prev_waypoint;
 	Gtk::Button *seek_prev_keyframe;
 	Gtk::Button *seek_prev_frame;
 	Gtk::Button *play;
 	Gtk::Button *pause;
 	Gtk::Button *seek_next_frame;
 	Gtk::Button *seek_next_keyframe;
+	Gtk::Button *seek_next_waypoint;
 	Gtk::Button *seek_end;
 	Widget_Time *end_time;
 	Gtk::ToggleButton *repeat;
@@ -80,12 +82,14 @@ public:
 	FrameDial();
 
 	Glib::SignalProxy0<void> signal_seek_begin()         { return seek_begin->signal_clicked(); }
+	Glib::SignalProxy0<void> signal_seek_prev_waypoint() { return seek_prev_waypoint->signal_clicked(); }
 	Glib::SignalProxy0<void> signal_seek_prev_keyframe() { return seek_prev_keyframe->signal_clicked(); }
 	Glib::SignalProxy0<void> signal_seek_prev_frame()    { return seek_prev_frame->signal_clicked(); }
 	Glib::SignalProxy0<void> signal_play()               { return play->signal_clicked(); }
 	Glib::SignalProxy0<void> signal_pause()              { return pause->signal_clicked();}
 	Glib::SignalProxy0<void> signal_seek_next_frame()    { return seek_next_frame->signal_clicked(); }
 	Glib::SignalProxy0<void> signal_seek_next_keyframe() { return seek_next_keyframe->signal_clicked(); }
+	Glib::SignalProxy0<void> signal_seek_next_waypoint() { return seek_next_waypoint->signal_clicked(); }
 	Glib::SignalProxy0<void> signal_seek_end()           { return seek_end->signal_clicked(); }
 	Glib::SignalProxy0<void> signal_end_time_changed()   { return end_time->signal_activate(); }
 	sigc::signal<void, bool> signal_repeat()             { return signal_repeat_; }
