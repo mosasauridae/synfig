@@ -165,6 +165,7 @@ static const std::map<std::string, std::pair<const char*, const char*>> known_ic
 	{"set_fill_color", {"set_fill_color_icon", N_("Set as Fill")}},
 
 	{"animate_seek_begin", {"animate_seek_begin_icon", N_("Seek to Begin")}},
+	{"animate_seek_prev_waypoint", {"animate_seek_prev_waypoint_icon", N_("Seek to Previous Waypoint")}},
 	{"animate_seek_prev_keyframe", {"animate_seek_prev_keyframe_icon", N_("Seek to Previous Keyframe")}},
 	{"animate_seek_prev_frame", {"animate_seek_prev_frame_icon", N_("Seek to Previous Frame")}},
 	{"animate_play", {"animate_play_icon", N_("Play")}},
@@ -172,6 +173,7 @@ static const std::map<std::string, std::pair<const char*, const char*>> known_ic
 	{"animate_pause", {"animate_pause_icon", N_("Pause")}},
 	{"animate_seek_next_frame", {"animate_seek_next_frame_icon", N_("Seek to Next frame")}},
 	{"animate_seek_next_keyframe", {"animate_seek_next_keyframe_icon", N_("Seek to Next Keyframe")}},
+	{"animate_seek_next_waypoint", {"animate_seek_next_waypoint_icon", N_("Seek to Next Waypoint")}},
 	{"animate_seek_end", {"animate_seek_end_icon", N_("Seek to End")}},
 	{"animate_loop", {"animate_loop_icon", N_("Animate Loop")}},
 	{"animate_bounds", {"animate_bounds_icon", N_("Play Bounds")}},
