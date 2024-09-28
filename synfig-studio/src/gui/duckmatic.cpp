@@ -1053,7 +1053,18 @@ Duckmatic::on_duck_changed(const studio::Duck &duck,const synfigapp::ValueDesc& 
 					Real new_length = duck.get_point().mag();
 					Angle angle = (*bone_node->get_link(angleIndex))(get_time()).get(Angle());
 					angle += duck.get_rotations();
-					return canvas_interface->change_value(synfigapp::ValueDesc(bone_node, angleIndex, value_desc.get_parent_desc()), angle, lock_animation)
+
+					// check if angle is allowed to be modified
+					bool angleModifiable = true;
+
+					auto angleNode = LinkableValueNode::Handle::cast_dynamic(
+								synfigapp::ValueDesc(bone_node, angleIndex, value_desc.get_parent_desc()).get_value_node());
+					if (!angleNode.empty() && angleNode->is_invertible(canvas_interface->get_time(), angle) != LinkableValueNode::INVERSE_OK)
+					{
+						angleModifiable = false;
+					}
+
+					return (!angleModifiable || canvas_interface->change_value(synfigapp::ValueDesc(bone_node, angleIndex, value_desc.get_parent_desc()), angle, lock_animation))
 						&& canvas_interface->change_value(value_desc, new_length, lock_animation);
 				}
 			}
