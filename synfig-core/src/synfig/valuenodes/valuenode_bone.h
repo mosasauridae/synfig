@@ -97,7 +97,7 @@ public:
 	static ValueNode_Bone::LooseHandle find(const String& name, etl::loose_handle<Canvas> canvas);
 	String unique_name(String name)const;
 	static void show_bone_map(etl::loose_handle<Canvas> canvas, const char *file, int line, String text, Time t=0);
-	static BoneMap get_bone_map(etl::handle<const Canvas> canvas);
+	static const BoneMap& get_bone_map(etl::handle<const Canvas> canvas);
 	static BoneList get_ordered_bones(etl::handle<const Canvas> canvas);
 
 	// checks if point belongs to the range of influence of current bone
@@ -122,6 +122,8 @@ public:
 
 	static ValueNode_Bone::Handle get_root_bone();
 
+	static Matrix get_animated_matrix(Time t, Real scalex, Real scaley, Angle angle, Point origin, ValueNode_Bone::ConstHandle parent);
+
 #ifdef _DEBUG
 	void ref() const noexcept override;
 	void unref() const override;
@@ -131,7 +133,6 @@ public:
 
 private:
 	virtual Matrix get_animated_matrix(Time t, Point child_origin)const;
-	Matrix get_animated_matrix(Time t, Real scalex, Real scaley, Angle angle, Point origin, ValueNode_Bone::ConstHandle parent)const;
 	ValueNode_Bone::ConstHandle get_parent(Time t)const;
 
 }; // END of class ValueNode_Bone
