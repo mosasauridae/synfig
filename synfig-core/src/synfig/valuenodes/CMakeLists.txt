@@ -9,6 +9,7 @@ target_sources(libsynfig
         "${CMAKE_CURRENT_LIST_DIR}/valuenode_animatedfile.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/valuenode_animatedinterface.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/valuenode_atan2.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/valuenode_bonejoint.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/valuenode_bline.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/valuenode_blinecalctangent.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/valuenode_blinecalcvertex.cpp"
