@@ -124,7 +124,7 @@ ValueNode_Bone::show_bone_map(Canvas::LooseHandle canvas, const char *file, int 
 	printf("\n");
 }
 
-ValueNode_Bone::BoneMap
+const ValueNode_Bone::BoneMap&
 ValueNode_Bone::get_bone_map(Canvas::ConstHandle canvas)
 {
 	return canvas_map[canvas];
@@ -385,7 +385,7 @@ ValueNode_Bone::get_animated_matrix(Time t, Point child_origin)const
 }
 
 Matrix
-ValueNode_Bone::get_animated_matrix(Time t, Real scalex, Real scaley, Angle angle, Point origin, ValueNode_Bone::ConstHandle parent)const
+ValueNode_Bone::get_animated_matrix(Time t, Real scalex, Real scaley, Angle angle, Point origin, ValueNode_Bone::ConstHandle parent)
 {
 	Matrix parent_matrix(parent->get_animated_matrix(t, origin));
 	Matrix ret = parent_matrix
@@ -395,8 +395,8 @@ ValueNode_Bone::get_animated_matrix(Time t, Real scalex, Real scaley, Angle angl
 	if (DEBUG_GETENV("SYNFIG_DEBUG_ANIMATED_MATRIX_CALCULATION"))
 	{
 		printf("%s  *\n", Matrix().set_scale(scalex, scaley).get_string(18, "animated_matrix = ",
-																		strprintf("scale(%7.2f, %7.2f) (%s)", scalex, scaley,
-																				  get_bone_name(t).c_str())).c_str());
+																		strprintf("scale(%7.2f, %7.2f)", scalex, scaley
+																				  )).c_str());
 		printf("%s  *\n", Matrix().set_rotate(angle).get_string(18, "", strprintf("rotate(%.2f)", Angle::deg(angle).get())).c_str());
 		printf("%s  =\n", parent_matrix.get_string(18, "", "parent").c_str());
 		printf("%s\n",	  ret.get_string(18).c_str());
