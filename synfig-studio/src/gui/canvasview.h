@@ -627,6 +627,7 @@ public:
 
 	void show_keyframe_dialog();
 	void on_keyframe_toggle();
+	void on_keyframe_set_toggle();
 	void on_keyframe_description_set();
 
 	void import_file();
