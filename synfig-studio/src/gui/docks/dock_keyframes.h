@@ -56,6 +56,7 @@ private:
 
 	void show_keyframe_properties();
 	void keyframe_toggle();
+	void keyframe_set_toggle();
 	void keyframe_description_set();
 
 	//animation render description change signal handler

@@ -3092,6 +3092,49 @@ CanvasView::on_keyframe_toggle()
 }
 
 void
+CanvasView::on_keyframe_set_toggle()
+{
+	Glib::RefPtr<Gtk::TreeSelection> selection(keyframe_tree->get_selection());
+	if(selection->get_selected())
+	{
+		Gtk::TreeRow row(*selection->get_selected());
+
+		Keyframe main_keyframe(row[keyframe_tree->model.keyframe]);
+
+		bool new_status = !main_keyframe.active();
+		String set = main_keyframe.get_set();
+
+		String name = strprintf(_("%s Keyframe Set '%s'"),
+								(new_status ? _("Activate") : _("Deactivate")),
+								set.c_str());
+
+		// Create the action group
+		Action::PassiveGrouper group(canvas_interface()->get_instance().get(),name);
+
+		for (const Keyframe& keyframe : canvas_interface()->get_canvas()->keyframe_list())
+		{
+			if (keyframe.get_set() != set)
+				continue;
+
+			Action::Handle action(Action::create("KeyframeToggle"));
+
+			if(!action)
+				continue;
+			action->set_param("canvas",canvas_interface()->get_canvas());
+			action->set_param("canvas_interface",canvas_interface());
+			action->set_param("keyframe",keyframe);
+			action->set_param("new_status", new_status);
+
+			if(!canvas_interface()->get_instance()->perform_action(action))
+			{
+				group.cancel();
+				return;
+			}
+		}
+	}
+}
+
+void
 CanvasView::on_keyframe_description_set()
 {
 	Glib::RefPtr<Gtk::TreeSelection> selection(keyframe_tree->get_selection());
