@@ -73,6 +73,8 @@ Dock_Keyframes::Dock_Keyframes():
 		sigc::mem_fun(*this,&Dock_Keyframes::show_keyframe_properties) );
 	keyframe_action_manager->signal_keyframe_toggle().connect(
 		sigc::mem_fun(*this,&Dock_Keyframes::keyframe_toggle) );
+	keyframe_action_manager->signal_keyframe_toggle_set().connect(
+		sigc::mem_fun(*this,&Dock_Keyframes::keyframe_set_toggle) );
 	keyframe_action_manager->signal_keyframe_description_set().connect(
 		sigc::mem_fun(*this,&Dock_Keyframes::keyframe_description_set) );
 
@@ -111,6 +113,13 @@ Dock_Keyframes::keyframe_toggle()
 {
 	if(get_canvas_view())
 		get_canvas_view()->on_keyframe_toggle();
+}
+
+void
+Dock_Keyframes::keyframe_set_toggle()
+{
+	if(get_canvas_view())
+		get_canvas_view()->on_keyframe_set_toggle();
 }
 
 void
