@@ -161,6 +161,12 @@ KeyframeActionManager::on_keyframe_toggle()
 	signal_keyframe_toggle_();
 }
 
+void
+KeyframeActionManager::on_keyframe_toggle_set()
+{
+	signal_keyframe_toggle_set_();
+}
+
 /*! \fn KeyframeActionManager::on_keyframe_description_set()
 **	\brief Signal handler for selected keyframe description change
 */
@@ -252,6 +258,10 @@ KeyframeActionManager::refresh()
 	Glib::RefPtr<Gtk::Action> action_kf_toggle(Gtk::Action::create("keyframe-toggle", _("Toggle Keyframe"), _("Toggle Keyframe")));
 	action_group_->add(action_kf_toggle,sigc::mem_fun(*this,&KeyframeActionManager::on_keyframe_toggle));
 
+	// Keyframe activate status definition
+	Glib::RefPtr<Gtk::Action> action_kf_toggle_set(Gtk::Action::create("keyframe-toggle-set", _("Toggle Keyframe Set"), _("Toggle Keyframe Set")));
+	action_group_->add(action_kf_toggle_set,sigc::mem_fun(*this,&KeyframeActionManager::on_keyframe_toggle_set));
+
 	// Keyframe description definition
 	Glib::RefPtr<Gtk::Action> action_kf_description(Gtk::Action::create("keyframe-description-set", _("Set Keyframe Description"), _("Set Keyframe Description")));
 	action_group_->add(action_kf_description,sigc::mem_fun(*this,&KeyframeActionManager::on_keyframe_description_set));
@@ -294,6 +304,7 @@ KeyframeActionManager::refresh()
 		{
 			action_kf_properties->set_sensitive(false);
 			action_kf_toggle->set_sensitive(false);
+			action_kf_toggle_set->set_sensitive(false);
 			action_kf_description->set_sensitive(false);
 		}
 	}
@@ -308,6 +319,7 @@ KeyframeActionManager::refresh()
 						"<menuitem action='action-KeyframeRemove' />"
 						"<menuitem action='keyframe-properties' />"
 						"<menuitem action='keyframe-toggle' />"
+						"<menuitem action='keyframe-toggle-set' />"
 						"<menuitem action='keyframe-description-set' />"
 				"</popup>"
 			"</ui>";
