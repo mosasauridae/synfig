@@ -111,6 +111,8 @@ Layer_Skeleton::set_param(const String &param, const ValueBase &value)
 	}
 
 	// Skip shape, polygon and composite parameters
+	if (param == "color")
+		return Layer_Shape::set_param(param,value);
 	if (param == "amount")
 		return Layer_Composite::set_param(param,value);
 	return Layer::set_param(param,value);
@@ -128,6 +130,8 @@ Layer_Skeleton::get_param(const String &param)const
 	// Skip shape, polygon and composite parameters
 	if (param == "amount")
 		return Layer_Composite::get_param(param);
+	if (param == "color")
+		return Layer_Shape::get_param(param);
 	return Layer::get_param(param);
 }
 
@@ -140,6 +144,11 @@ Layer_Skeleton::get_param_vocab()const
 	ret.push_back(ParamDesc("amount")
 		.set_local_name(_("Opacity"))
 		.set_description(_("Alpha channel of the layer"))
+	);
+
+	ret.push_back(ParamDesc("color")
+		.set_local_name(_("Color"))
+		.set_description(_("Layer Color"))
 	);
 
 	// Self params
