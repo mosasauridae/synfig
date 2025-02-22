@@ -37,6 +37,7 @@
 
 #include "valuenode.h"
 #include "valuenode_registry.h"
+#include "valuenodes/valuenode_bone.h"
 #include "general.h"
 #include <synfig/localization.h>
 #include "canvas.h"
@@ -711,10 +712,28 @@ LinkableValueNode::get_link_description(int index, bool show_exported_name)const
 					break;
 				}
 
-			description = linkable_value_node->get_local_name() + link + (parent_linkable_vn?">":"") + description;
+			String name;
+
+			if (linkable_value_node->get_type() == type_bone_object)
+			{
+				const ValueNode_Bone* bone = dynamic_cast<const ValueNode_Bone*>(linkable_value_node.get());
+				if (bone)
+					name = bone->get_bone_name(Time());
+			}
+			else
+			{
+				name = linkable_value_node->get_local_name();
+			}
+
+			description = name + link + (parent_linkable_vn?">":"") + description;
 		}
 		node = node->get_first_parent();
 		parent_linkable_vn = linkable_value_node;
+
+		if (linkable_value_node->get_type() == type_bone_object)
+		{
+			break;
+		}
 	}
 
 	Layer::ConstHandle parent_layer(dynamic_cast<const Layer*>(node));
