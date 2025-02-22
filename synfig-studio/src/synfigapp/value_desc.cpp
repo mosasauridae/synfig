@@ -76,7 +76,7 @@ ValueDesc::get_description(bool show_exported_name)const
 
 	if (parent_is_layer())
 	{
-		description = strprintf("%s (%s):%s", _("Layer Parameter"),
+		description = strprintf("%s:%s",
 								get_layer()->get_non_empty_description().c_str(),
 								get_layer()->get_param_local_name(get_param_name()).c_str());
 		if (show_exported_name)
@@ -87,13 +87,13 @@ ValueDesc::get_description(bool show_exported_name)const
 		if (parent_is_linkable_value_node())
 		{
 			synfig::LinkableValueNode::Handle value_node(synfig::LinkableValueNode::Handle::cast_reinterpret(get_parent_value_node()));
-			description = strprintf("%s %s", _("ValueNode"),
+			description = strprintf("%s",
 									value_node->get_link_description(get_index(), show_exported_name).c_str());
 		}
 		else if (parent_is_value_node_const())
 		{
 			synfig::ValueNode_Const::Handle value_node(synfig::ValueNode_Const::Handle::cast_reinterpret(get_parent_value_node()));
-			description = strprintf("%s %s", _("Const ValueNode"),
+			description = strprintf("%s",
 									value_node->get_description(show_exported_name).c_str());
 		}
 		else if (parent_is_waypoint())
@@ -105,7 +105,7 @@ ValueDesc::get_description(bool show_exported_name)const
 		}
 	}
 	else if (parent_is_canvas())
-		description = strprintf("%s (%s)", _("Exported ValueNode"),
+		description = strprintf("%s",
 								get_value_node()->get_id().c_str());
 	else
 		description = "Unknown ValueDesc type";
