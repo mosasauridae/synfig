@@ -917,11 +917,16 @@ Widget_Curves::on_draw(const Cairo::RefPtr<Cairo::Context> &cr)
 		tooltip.draw(cr, item_pos_x, item_pos_y);
 	}
 
+	Real margin = std::max((range_max - range_min) / 10.0, 0.2);
+	Real lower = -range_max - margin;
+	Real upper = -range_min + margin;
+
 	if (channel_point_sd.get_state() != channel_point_sd.POINTER_DRAGGING && channel_point_sd.get_state() != channel_point_sd.POINTER_PANNING && !curve_list.empty() && range_min < range_max)
 		ConfigureAdjustment(range_adjustment)
-			.set_lower(-range_max - 0.5*range_adjustment->get_page_size())
-			.set_upper(-range_min + 0.5*range_adjustment->get_page_size())
-			.set_step_increment(range_adjustment->get_page_size()*20.0/(double)h) // 20 pixels
+			.set_lower(lower)
+			.set_upper(upper)
+			.set_step_increment(margin)
+			.set_page_size(std::min(10.0, upper-lower))
 			.finish();
 	cr->restore();
 
