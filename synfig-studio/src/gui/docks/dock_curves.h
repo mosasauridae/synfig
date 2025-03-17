@@ -32,10 +32,13 @@
 
 #include <gtkmm/scrollbar.h>
 #include <gtkmm/table.h>
+#include <gtkmm/treeview.h>
 
 #include <gui/docks/dock_canvasspecific.h>
 #include <gui/widgets/widget_canvastimeslider.h>
 #include <gui/widgets/widget_keyframe_list.h>
+
+#include <unordered_map>
 
 /* === M A C R O S ========================================================= */
 
@@ -49,6 +52,12 @@ class Widget_Curves;
 
 class Dock_Curves : public Dock_CanvasSpecific
 {
+	Gtk::Toolbar *prop_toolbar_;
+	std::unordered_map<synfig::String, Gtk::ToggleToolButton*> type_buttons_;
+	Gtk::ToggleToolButton* all_button_;
+
+	bool toggling_ = false;
+
 	Gtk::Scrollbar hscrollbar_;
 	Gtk::Scrollbar vscrollbar_;
 
@@ -77,6 +86,13 @@ private:
 
 	void on_curves_waypoint_clicked(synfigapp::ValueDesc value_desc, std::set<synfig::Waypoint,std::less<synfig::UniqueID>> waypoint_set, int button);
 	void on_curves_waypoint_double_clicked(synfigapp::ValueDesc value_desc, std::set<synfig::Waypoint,std::less<synfig::UniqueID>> waypoint_set, int button);
+
+	void curve_selection_changed(Gtk::TreeView* param_tree_view, Widget_Curves* curves);
+
+	bool is_any_channel_active() const;
+	void all_button_toggled();
+	void type_button_toggled(const synfig::String& name);
+
 }; // END of Dock_Curves
 
 }; // END of namespace studio

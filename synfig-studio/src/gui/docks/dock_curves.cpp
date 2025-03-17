@@ -34,6 +34,7 @@
 
 #include "dock_curves.h"
 
+#include <gui/app.h>
 #include <gui/canvasview.h>
 #include <gui/localization.h>
 #include <gui/trees/layerparamtreestore.h>
@@ -60,15 +61,38 @@ Dock_Curves::Dock_Curves():
 	last_widget_curves_()
 {
 	vscrollbar_.set_orientation(Gtk::ORIENTATION_VERTICAL);
+
+	// Make toolbar small for space efficiency
+	get_style_context()->add_class("synfigstudio-efficient-workspace");
+
+	prop_toolbar_ = Gtk::manage(new Gtk::Toolbar);
+
+	all_button_ = Gtk::manage(new Gtk::ToggleToolButton());
+	all_button_->set_label(_("All"));
+	all_button_->set_active(true);
+	all_button_->signal_toggled().connect(std::bind(&Dock_Curves::all_button_toggled, this));
+	prop_toolbar_->append(*all_button_);
+
+	for (const String& type_name : Widget_Curves::get_all_channel_names())
+	{
+		Gtk::ToggleToolButton* type_button = Gtk::manage(new Gtk::ToggleToolButton);
+		type_button->set_label(_(type_name.c_str()));
+		type_button->signal_toggled().connect([=]() { this->type_button_toggled(type_name); });
+		type_buttons_[type_name] = type_button;
+		prop_toolbar_->append(*type_button);
+	}
+
+	set_toolbar(*prop_toolbar_);
 }
 
 Dock_Curves::~Dock_Curves()
 {
 	if (table_) delete table_;
+	if (prop_toolbar_) delete prop_toolbar_;
 }
 
-static void
-_curve_selection_changed(Gtk::TreeView* param_tree_view, Widget_Curves* curves, Dock_Curves* dock)
+void
+Dock_Curves::curve_selection_changed(Gtk::TreeView* param_tree_view, Widget_Curves* curves)
 {
 	LayerParamTreeStore::Model param_model;
 	Gtk::TreeIter iter;
@@ -99,7 +123,30 @@ _curve_selection_changed(Gtk::TreeView* param_tree_view, Widget_Curves* curves, 
 
 		value_descs.push_back( std::pair<std::string, synfigapp::ValueDesc> (name, (*iter)[param_model.value_desc]));
 	}
-	curves->set_value_descs(dock->get_canvas_interface(), value_descs);
+
+	all_button_->hide();
+	for (auto btn : type_buttons_)
+		btn.second->hide();
+
+	std::vector<String> channels = Widget_Curves::get_channel_names(value_descs);
+
+	all_button_->set_active(true);
+	if (channels.size() > 1)
+	{
+		all_button_->show();
+
+		for (const auto& d : channels)
+		{
+			auto iter = type_buttons_.find(d);
+			if (iter != type_buttons_.end())
+			{
+				iter->second->show();
+				iter->second->set_active(false);
+			}
+		}
+	}
+
+	curves->set_value_descs(get_canvas_interface(), value_descs);
 }
 
 void
@@ -117,15 +164,7 @@ Dock_Curves::init_canvas_view_vfunc(CanvasView::LooseHandle canvas_view)
 	);
 
 	param_tree_view->get_selection()->signal_changed().connect(
-		sigc::bind(
-			sigc::bind(
-				sigc::bind(
-					sigc::ptr_fun(
-						_curve_selection_changed
-					),this
-				),curves
-			),param_tree_view
-		)
+		[=]() {	this->curve_selection_changed(param_tree_view, curves); }
 	);
 
 	if (studio::LayerTree* tree_layer = dynamic_cast<studio::LayerTree*>(canvas_view->get_ext_widget("layers_cmp"))) {
@@ -240,4 +279,60 @@ Dock_Curves::on_curves_waypoint_double_clicked(synfigapp::ValueDesc value_desc, 
 	CanvasView::LooseHandle canvas_view = get_canvas_view();
 	if (canvas_view)
 		canvas_view->on_waypoint_clicked_canvasview(value_desc, waypoint_set, button);
+}
+
+bool Dock_Curves::is_any_channel_active() const
+{
+	if (all_button_->get_active())
+		return true;
+
+	for (const auto& kv : type_buttons_)
+		if (kv.second->get_active())
+			return true;
+
+	return false;
+}
+
+void Dock_Curves::all_button_toggled()
+{
+	if (toggling_ || last_widget_curves_ == nullptr)
+		return;
+
+	toggling_ = true;
+	if (all_button_->get_active())
+	{
+		for (const auto& kv : type_buttons_)
+			kv.second->set_active(false);
+
+		last_widget_curves_->set_selected_channel("");
+	}
+	else
+	{
+		if (!is_any_channel_active())
+			all_button_->set_active(true);
+	}
+	toggling_ = false;
+}
+
+void Dock_Curves::type_button_toggled(const synfig::String& name)
+{
+	if (toggling_ || last_widget_curves_ == nullptr)
+		return;
+
+	toggling_ = true;
+	if (type_buttons_[name]->get_active())
+	{
+		all_button_->set_active(false);
+		for (const auto& kv : type_buttons_)
+			if (kv.first != name)
+				kv.second->set_active(false);
+
+		last_widget_curves_->set_selected_channel(name);
+	}
+	else
+	{
+		if (!is_any_channel_active())
+			type_buttons_[name]->set_active(true);
+	}
+	toggling_ = false;
 }
