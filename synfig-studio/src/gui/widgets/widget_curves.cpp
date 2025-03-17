@@ -575,6 +575,61 @@ Widget_Curves::~Widget_Curves() {
 	clear();
 }
 
+std::vector<String> Widget_Curves::get_channel_names(const std::list<std::pair<std::string, synfigapp::ValueDesc> > &data)
+{
+	std::set<String> res;
+
+	for (const auto& kv : data)
+	{
+		CurveStruct dummy;
+		dummy.init(kv.second);
+		for (const Channel& c : dummy.channels)
+		{
+			res.insert(c.name);
+		}
+	}
+
+	return {res.begin(), res.end()};
+}
+
+std::vector<String> Widget_Curves::get_all_channel_names()
+{
+	return {
+		"real",
+		"time",
+		"int",
+		"bool",
+		"theta",
+		"red",
+		"green",
+		"blue",
+		"alpha",
+		"x",
+		"y",
+		"v.x",
+		"v.y",
+//		"width", // avoid duplicate
+		"origin",
+		"tsplit",
+		"t1.x",
+		"t1.y",
+		"t2.x",
+		"t2.y",
+		"rsplit",
+		"asplit",
+		"position",
+		"width",
+		"offset",
+		"length",
+	};
+}
+
+void Widget_Curves::set_selected_channel(const String &channel_name)
+{
+	selected_channel = channel_name;
+	queue_draw();
+}
+
 void
 Widget_Curves::clear() {
 	while(!value_desc_changed.empty()) {
@@ -739,6 +794,10 @@ Widget_Curves::on_draw(const Cairo::RefPtr<Cairo::Context> &cr)
 		std::vector<Real> channel_values;
 		CurveStruct::get_value_base_channel_values(waypoint.get_value(), channel_values);
 		for (size_t c = 0; c < num_channels; c++) {
+
+			if (!selected_channel.empty() && curve_it->channels[c].name != selected_channel)
+				continue;
+
 			Real value = curve_it->get_value(c, waypoint.get_time(), time_plot_data->dt);
 			int y = time_plot_data->get_pixel_y_coord(value);
 
@@ -772,6 +831,10 @@ Widget_Curves::on_draw(const Cairo::RefPtr<Cairo::Context> &cr)
 		Time t = time_plot_data->lower_ex;
 		for(int j = 0; j < w; ++j, t += time_plot_data->dt) {
 			for(size_t c = 0; c < channels; ++c) {
+
+				if (!selected_channel.empty() && curve_it->channels[c].name != selected_channel)
+					continue;
+
 				Real y = curve_it->get_value(c, t, time_plot_data->dt);
 				range_max = std::max(range_max, y);
 				range_min = std::min(range_min, y);
@@ -793,6 +856,10 @@ Widget_Curves::on_draw(const Cairo::RefPtr<Cairo::Context> &cr)
 		const std::vector<double> dashes4 = {4};
 		const std::vector<double> no_dashes;
 		for(size_t c = 0; c < channels; ++c) {
+
+			if (!selected_channel.empty() && curve_it->channels[c].name != selected_channel)
+				continue;
+
 			// Draw the curve
 			std::vector<Gdk::Point> &p = points[c];
 			std::vector<Gdk::Point>::iterator p_it;
@@ -842,6 +909,10 @@ Widget_Curves::on_draw(const Cairo::RefPtr<Cairo::Context> &cr)
 			const auto & hovered_point = channel_point_sd.get_hovered_item();
 			bool hover = hovered_point.is_valid() && tp == hovered_point.time_point && hovered_point.curve_it == curve_it;
 			for (size_t c = 0; c < channels; ++c) {
+
+				if (!selected_channel.empty() && curve_it->channels[c].name != selected_channel)
+					continue;
+
 				Real y = curve_it->get_value(c, t, time_plot_data->dt);
 				int py = time_plot_data->get_pixel_y_coord(y);
 				area.set_y(0 - waypoint_edge_length/2 + 1 + py);
