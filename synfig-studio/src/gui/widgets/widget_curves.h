@@ -99,6 +99,8 @@ private:
 
 	std::vector<std::pair<synfig::Waypoint, std::list<CurveStruct>::iterator> > overlapped_waypoints;
 
+	std::string selected_channel;
+
 	void on_waypoint_clicked(const ChannelPoint &cp, unsigned int button, Gdk::Point /*point*/);
 	void on_waypoint_double_clicked(const ChannelPoint &cp, unsigned int button, Gdk::Point /*point*/);
 
@@ -108,6 +110,11 @@ private:
 public:
 	Widget_Curves();
 	~Widget_Curves();
+
+	static std::vector<synfig::String> get_channel_names(const std::list< std::pair<std::string, synfigapp::ValueDesc> > &data);
+	static std::vector<synfig::String> get_all_channel_names();
+
+	void set_selected_channel(const synfig::String& channel_name);
 
 	const Glib::RefPtr<Gtk::Adjustment>& get_range_adjustment() const { return range_adjustment; }
 
