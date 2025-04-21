@@ -956,6 +956,13 @@ xmlpp::Element* encode_canvas(xmlpp::Element* root,Canvas::ConstHandle canvas)
 		}
 		for(KeyframeList::const_iterator iter=canvas->keyframe_list().begin();iter!=canvas->keyframe_list().end();++iter)
 			encode_keyframe(root->add_child("keyframe"),*iter,canvas->rend_desc().get_frame_rate());
+
+		auto timelines = root->add_child("timelines");
+		for (const std::string& timeline : canvas->timeline_list())
+		{
+			auto tElem = timelines->add_child("timeline");
+			tElem->set_attribute("name", timeline);
+		}
 	}
 
 	// Output the <bones> section

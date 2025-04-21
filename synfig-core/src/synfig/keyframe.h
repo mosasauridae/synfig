@@ -59,6 +59,7 @@ private:
 	Time time_;
 	String desc_;
 	String set_;
+	GUID timeline_ = GUID::zero();
 	GUID guid_;
 
 	/**
@@ -92,6 +93,9 @@ public:
 
 	void set_set(String x) { set_=x; }
 	String get_set() const { return set_; }
+
+	void set_timeline(const GUID& g) { timeline_ = g; }
+	GUID get_timeline() const { return timeline_; }
         
 	/** Enables the keyframe, by making it @em active) */
 	void enable() { set_active(true); }

@@ -224,6 +224,8 @@ private:
 	/*! \see keyframe_list()*/
 	KeyframeList keyframe_list_;
 
+	std::vector<std::string> timeline_list_;
+
 	//! A handle to the parent canvas of this canvas.
 	/*!	If canvas is a root canvas, then this handle is empty
 	**	\see parent()
@@ -498,6 +500,9 @@ public:
 
 	//! Returns a reference to the KeyframeList for this Canvas
 	const KeyframeList &keyframe_list()const;
+
+	std::vector<std::string>& timeline_list() { return timeline_list_; }
+	const std::vector<std::string>& timeline_list() const { return timeline_list_; }
 
 	//! Finds the ValueNode in the Canvas with the given \a id
 	/*!	\return If found, returns a handle to the ValueNode.

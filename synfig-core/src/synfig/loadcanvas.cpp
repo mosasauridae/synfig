@@ -3357,6 +3357,22 @@ CanvasParser::parse_canvas(xmlpp::Element *element,Canvas::Handle parent,bool in
 				canvas->keyframe_list().sync();
 			}
 			else
+			if(child->get_name()=="timelines")
+			{
+				canvas->timeline_list().clear();
+				for (xmlpp::Node* cElem : child->get_children("timeline"))
+				{
+					xmlpp::Element *tElem(dynamic_cast<xmlpp::Element*>(cElem));
+					if (tElem != nullptr)
+					{
+						auto attr = tElem->get_attribute("name");
+						if (attr){
+							canvas->timeline_list().push_back(std::string{attr->get_value()});
+						}
+					}
+				}
+			}
+			else
 			if(child->get_name()=="meta")
 			{
 				if(canvas->is_inline())

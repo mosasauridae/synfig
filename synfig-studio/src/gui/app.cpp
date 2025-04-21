@@ -100,6 +100,7 @@
 #include <gui/docks/dock_soundwave.h>
 #include <gui/docks/dock_timetrack.h>
 #include <gui/docks/dock_timetrack2.h>
+#include <gui/docks/dock_timetrackselector.h>
 #include <gui/docks/dock_toolbox.h>
 
 #include <gui/instance.h>
@@ -261,6 +262,7 @@ static studio::Dock_Navigator     *dock_navigator;
 static studio::Dock_SoundWave     *dock_soundwave;
 static studio::Dock_Timetrack_Old *dock_timetrack_old;
 static studio::Dock_Timetrack2    *dock_timetrack;
+static studio::Dock_TimetrackSelector *dock_timetrackselector;
        studio::Dock_Toolbox  *App::dock_toolbox = nullptr;
 
 static std::list< etl::handle< studio::Module > > module_list_;
@@ -1041,6 +1043,7 @@ DEFINE_ACTION("panel-groups",          _("Sets"))
 DEFINE_ACTION("panel-pal_edit",        _("Palette Editor"))
 DEFINE_ACTION("panel-soundwave",       _("Sound"))
 DEFINE_ACTION("panel-timetrack",       _("Timetrack"))
+DEFINE_ACTION("panel-timetrackselector", _("Timetrack Selector"))
 
 // actions in Help menu
 DEFINE_ACTION("help",           Gtk::Stock::HELP)
@@ -1196,6 +1199,7 @@ DEFINE_ACTION("switch-to-rightmost-tab",  _("Switch to Rightmost Tab"))
 "		<menuitem action='panel-navigator' />"
 "		<menuitem action='panel-timetrack-old' />"
 "		<menuitem action='panel-timetrack' />"
+"		<menuitem action='panel-timetrackselector' />"
 "		<menuitem action='panel-curves' />"
 "		<menuitem action='panel-groups' />"
 "		<menuitem action='panel-pal_edit' />"
@@ -1655,6 +1659,10 @@ void App::init(const synfig::String& rootpath)
 		studio_init_cb.task(_("Init Timetrack..."));
 		dock_timetrack = new studio::Dock_Timetrack2();
 		dock_manager->register_dockable(*dock_timetrack);
+
+		studio_init_cb.task(_("Init Timetrack Selector..."));
+		dock_timetrackselector = new studio::Dock_TimetrackSelector();
+		dock_manager->register_dockable(*dock_timetrackselector);
 
 		studio_init_cb.task(_("Init Curve Editor..."));
 		dock_curves = new studio::Dock_Curves();

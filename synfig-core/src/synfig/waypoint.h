@@ -200,6 +200,8 @@ private:
 
 	bool ghost = false;
 
+	GUID timeline_ = GUID::zero();
+
 	/*
  --	** -- C O N S T R U C T O R S ---------------------------------------------
 	*/
@@ -227,6 +229,9 @@ public:
 
 	bool is_ghost() const { return ghost; }
 	void set_ghost(bool x) { ghost=x; }
+
+	GUID get_timeline() const { return timeline_; }
+	void set_timeline(const GUID& g) { timeline_ = g; }
 
 	//! Gets the before Interpolation
 	Interpolation get_before()const { return before; }
