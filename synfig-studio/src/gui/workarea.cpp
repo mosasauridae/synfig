@@ -778,6 +778,11 @@ WorkArea::set_background_rendering(bool x)
 	queue_draw();
 }
 
+void WorkArea::do_render_now()
+{
+	set_render_now(!render_now);
+}
+
 void WorkArea::set_render_now(bool x)
 {
 	if (render_now == x)
