@@ -1409,6 +1409,8 @@ CanvasView::init_menus()
 		{"close-document",    "window-close",           N_("Close Document"),       "", sigc::hide_return(sigc::mem_fun(*this, &CanvasView::close_instance)) },
 		{"quit",              "application-exit",       N_("Quit"),                 "",  sigc::hide_return(sigc::ptr_fun(&App::quit)) },
 
+		{"background-render-once", "", N_("Background Render Once"), "", sigc::mem_fun(*work_area, &WorkArea::do_render_now) },
+
 		{"select-all-ducks",    "", N_("Select All Handles"), "", sigc::mem_fun(*work_area, &WorkArea::select_all_ducks) },
 		{"unselect-all-ducks",  "", N_("Unselect All Handles"), "", sigc::mem_fun(*work_area, &WorkArea::unselect_all_ducks) },
 		{"select-all-layers",   "", N_("Select All Layers"), "", sigc::mem_fun(*this, &CanvasView::on_select_layers) },

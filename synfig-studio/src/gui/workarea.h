@@ -339,6 +339,8 @@ public:
 	void set_background_rendering(bool x);
 	bool get_background_rendering() const { return background_rendering; }
 
+	void do_render_now();
+
 	void set_render_now(bool x);
 	bool get_render_now() const { return render_now; }
 

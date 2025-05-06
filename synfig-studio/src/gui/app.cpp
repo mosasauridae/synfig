@@ -980,6 +980,7 @@ DEFINE_ACTION("toggle-low-res",    _("Toggle Low-Res"))
 DEFINE_ACTION("decrease-low-res-pixel-size", _("Decrease Low-Res Pixel Size"))
 DEFINE_ACTION("increase-low-res-pixel-size", _("Increase Low-Res Pixel Size"))
 DEFINE_ACTION("toggle-background-rendering", _("Toggle Background Rendering"))
+DEFINE_ACTION("background-render-once",      _("Background Render Once"))
 DEFINE_ACTION("toggle-onion-skin",           _("Toggle Onion Skin"))
 DEFINE_ACTION("toggle-onion-skin-keyframes", _("Toggle Onion Skin on Keyframes"))
 DEFINE_ACTION("toggle-keyframe-lock-past",   _("Toggle Keyframe Lock Past"))
@@ -1142,6 +1143,7 @@ DEFINE_ACTION("switch-to-rightmost-tab",  _("Switch to Rightmost Tab"))
 "		<menuitem action='toggle-guide-snap'/>"
 "		<menuitem action='toggle-low-res'/>"
 "		<menuitem action='toggle-background-rendering'/>"
+"		<menuitem action='background-render-once'/>"
 "		<menuitem action='toggle-onion-skin'/>"
 "		<menuitem action='toggle-onion-skin-keyframes'/>"
 "		<menuitem action='toggle-keyframe-lock-past'/>"
@@ -1348,6 +1350,7 @@ App::get_default_accel_map()
 		{"F8",                      "<Actions>/canvasview/properties"},
 		{"F12",                     "<Actions>/canvasview/options"},
 		{"<control>i",              "<Actions>/canvasview/import"},
+		{"<control>~",              "<Actions>/canvasview/background-render-once"},
 		{"numbersign",              "<Actions>/canvasview/toggle-grid-show"},
 		{"<Control>l",              "<Actions>/canvasview/toggle-grid-snap"},
 		{"<Control>n",              "<Actions>/mainwindow/new"},
