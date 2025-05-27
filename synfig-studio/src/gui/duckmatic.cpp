@@ -515,11 +515,10 @@ Duckmatic::update_ducks()
 							{
 								// Create a new BLinePoint
 								BLinePoint nbp;
-								// Terporary set the flags for the new BLinePoint to all split
+								// Temporarily set the flags for the new BLinePoint to all split
 								nbp.set_split_tangent_both(true);
 								// Now we can set the tangents. Tangent2 won't be modified by tangent1
-								nbp.set_tangent1(c1->get_point());
-								nbp.set_tangent2(bp.get_tangent1());
+								nbp.set_tangents(c1->get_point(), c1->get_point());
 								// Now update the flags
 								nbp.set_split_tangent_radius(bp.get_split_tangent_radius());
 								nbp.set_split_tangent_angle(bp.get_split_tangent_angle());
@@ -563,11 +562,10 @@ Duckmatic::update_ducks()
 							{
 								// Create a new BLinePoint
 								BLinePoint nbp;
-								// Terporary set the flags for the new BLinePoint to all split
+								// Temporarily set the flags for the new BLinePoint to all split
 								nbp.set_split_tangent_both(true);
 								// Now we can set the tangents. Tangent2 won't be modified by tangent1
-								nbp.set_tangent1(c2->get_point());
-								nbp.set_tangent2(bp.get_tangent1());
+								nbp.set_tangents(c2->get_point(), c2->get_point());
 								// Now update the flags
 								nbp.set_split_tangent_radius(bp.get_split_tangent_radius());
 								nbp.set_split_tangent_angle(bp.get_split_tangent_angle());
@@ -710,11 +708,10 @@ Duckmatic::update_ducks()
 										{
 											// Create a new BLinePoint
 											BLinePoint nbp;
-											// Terporary set the flags for the new BLinePoint to all split
+											// Temporarily set the flags for the new BLinePoint to all split
 											nbp.set_split_tangent_both(true);
 											// Now we can set the tangents. Tangent2 won't be modified by tangent1
-											nbp.set_tangent1(duck->get_point());
-											nbp.set_tangent2(bp.get_tangent1());
+											nbp.set_tangents(duck->get_point(), duck->get_point());
 											// Now update the flags
 											nbp.set_split_tangent_radius(bp.get_split_tangent_radius());
 											nbp.set_split_tangent_angle(bp.get_split_tangent_angle());
@@ -1143,13 +1140,11 @@ Duckmatic::on_duck_changed(const studio::Duck &duck,const synfigapp::ValueDesc& 
 			else
 			if (point.get_split_tangent_angle())
 			{
-				point.set_tangent1( Point(duck.get_point().mag(), point.get_tangent1().angle()) );
-				point.set_tangent2(duck.get_point());
+				point.set_tangents(Point(duck.get_point().mag(), point.get_tangent1().angle()), duck.get_point());
 			}
 			else
 			{
-				point.set_tangent1( Point(point.get_tangent1().mag(), duck.get_point().angle()) );
-				point.set_tangent2(duck.get_point());
+				point.set_tangents(Point(point.get_tangent1().mag(), duck.get_point().angle()), duck.get_point());
 			}
 			break;
 		default:
