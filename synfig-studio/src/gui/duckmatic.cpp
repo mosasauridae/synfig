@@ -513,7 +513,7 @@ Duckmatic::update_ducks()
 							}
 							else if(index==t2_index && (*iter)->get_value_desc().get_index()!=t2_index)
 							{
-								bp.set_tangents(c1->get_point(), c1->get_point());
+								bp.set_tangents(c1->get_point(), bp.get_tangent1());
 								Vector t1(bp.get_tangent2());
 								(*iter)->set_point(Point(t1));
 							}
@@ -551,7 +551,7 @@ Duckmatic::update_ducks()
 							}
 							else if(index==t2_index && (*iter)->get_value_desc().get_index()!=t2_index)
 							{
-								bp.set_tangents(c2->get_point(), c2->get_point());
+								bp.set_tangents(c2->get_point(), bp.get_tangent1());
 								Vector t1(bp.get_tangent2());
 								(*iter)->set_point(Point(t1));
 							}
@@ -687,8 +687,8 @@ Duckmatic::update_ducks()
 											(*iter)->set_point(Point(t2));
 										}
 										else if(index==t2_index && (*iter)->get_value_desc().get_index()!=t2_index)
-										{											
-											bp.set_tangents(duck->get_point(), duck->get_point());
+										{
+											bp.set_tangents(duck->get_point(), bp.get_tangent1());
 											Vector t1(bp.get_tangent2());
 											(*iter)->set_point(Point(t1));
 										}
