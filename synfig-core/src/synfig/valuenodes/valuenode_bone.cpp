@@ -130,19 +130,39 @@ ValueNode_Bone::get_bone_map(Canvas::ConstHandle canvas)
 	return canvas_map[canvas];
 }
 
+struct BoneHandleComparator
+{
+	bool operator()(const ValueNode_Bone::Handle& lhs, const ValueNode_Bone::Handle& rhs)const
+	{
+		return std::forward_as_tuple(lhs->get_bone_name(0), lhs->get_guid(), lhs) < std::forward_as_tuple(rhs->get_bone_name(0), rhs->get_guid(), rhs);
+	}
+
+	bool operator()(const ValueNode_Bone::LooseHandle& lhs, const ValueNode_Bone::LooseHandle& rhs)const
+	{
+		return std::forward_as_tuple(lhs->get_bone_name(0), lhs->get_guid(), lhs) < std::forward_as_tuple(rhs->get_bone_name(0), rhs->get_guid(), rhs);
+	}
+};
+
 ValueNode_Bone::BoneList
 ValueNode_Bone::get_ordered_bones(Canvas::ConstHandle canvas)
 {
-	std::multimap<ValueNode_Bone::Handle, ValueNode_Bone::Handle> uses;
-	std::multimap<ValueNode_Bone::Handle, ValueNode_Bone::Handle> is_used_by;
+	std::multimap<ValueNode_Bone::Handle, ValueNode_Bone::Handle, BoneHandleComparator> uses;
+	std::multimap<ValueNode_Bone::Handle, ValueNode_Bone::Handle, BoneHandleComparator> is_used_by;
 	BoneList current_list;
 
 	{
-		BoneMap bone_map(canvas_map[canvas]);
-		for(BoneMap::const_iterator iter=bone_map.begin();iter!=bone_map.end();++iter)
+		BoneMap bone_map2(canvas_map[canvas]);
+
+		std::set<ValueNode_Bone::LooseHandle, BoneHandleComparator> bone_map;
+		for (const auto& a : bone_map2)
+			bone_map.insert(a.second);
+
+		for(auto iter=bone_map.begin();iter!=bone_map.end();++iter)
 		{
-			ValueNode_Bone::Handle user(iter->second);
-			BoneSet ref(get_bones_referenced_by(user, false));
+			ValueNode_Bone::Handle user(*iter);
+			BoneSet ref2(get_bones_referenced_by(user, false));
+			std::set<ValueNode_Bone::LooseHandle, BoneHandleComparator> ref(ref2.begin(), ref2.end());
+
 			if (ref.empty())
 			{
 				DEBUG_LOG("SYNFIG_DEBUG_ORDER_BONES_FOR_SAVE_CANVAS", "%s:%d %s doesn't need anybody\n", __FILE__, __LINE__,
@@ -150,7 +170,7 @@ ValueNode_Bone::get_ordered_bones(Canvas::ConstHandle canvas)
 				current_list.push_back(user);
 			}
 			else
-				for(BoneSet::iterator iter=ref.begin();iter!=ref.end();++iter)
+				for(auto iter=ref.begin();iter!=ref.end();++iter)
 				{
 					ValueNode_Bone::Handle used(*iter);
 					DEBUG_LOG("SYNFIG_DEBUG_ORDER_BONES_FOR_SAVE_CANVAS", "%s:%d %s is used by %s\n", __FILE__, __LINE__,
@@ -176,16 +196,16 @@ ValueNode_Bone::get_ordered_bones(Canvas::ConstHandle canvas)
 			DEBUG_LOG("SYNFIG_DEBUG_ORDER_BONES_FOR_SAVE_CANVAS", "%s:%d bone: %s\n", __FILE__, __LINE__, bone->get_bone_name(0).c_str());
 			ret.push_back(bone);
 
-			std::multimap<ValueNode_Bone::Handle, ValueNode_Bone::Handle>::iterator begin(is_used_by.lower_bound(bone));
-			std::multimap<ValueNode_Bone::Handle, ValueNode_Bone::Handle>::iterator end(is_used_by.upper_bound(bone));
-			for (std::multimap<ValueNode_Bone::Handle, ValueNode_Bone::Handle>::iterator iter = begin; iter != end; iter++)
+			auto begin(is_used_by.lower_bound(bone));
+			auto end(is_used_by.upper_bound(bone));
+			for (auto iter = begin; iter != end; iter++)
 			{
 				ValueNode_Bone::Handle user(iter->second);
 				DEBUG_LOG("SYNFIG_DEBUG_ORDER_BONES_FOR_SAVE_CANVAS", "\t\t\t%s:%d user: %s\n", __FILE__, __LINE__, user->get_bone_name(0).c_str());
 
 				// erase (user,bone) from uses
 				DEBUG_LOG("SYNFIG_DEBUG_ORDER_BONES_FOR_SAVE_CANVAS", "%s:%d trying to erase - searching %zd\n", __FILE__, __LINE__, uses.count(user));
-				std::multimap<ValueNode_Bone::Handle, ValueNode_Bone::Handle>::iterator end2(uses.upper_bound(user));
+				auto end2(uses.upper_bound(user));
 				bool found = false;
 				for (auto iter2 = uses.lower_bound(user); iter2 != end2; ++iter2)
 				{
