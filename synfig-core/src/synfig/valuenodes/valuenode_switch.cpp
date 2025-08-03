@@ -125,8 +125,29 @@ ValueNode_Switch::operator()(Time t)const
 	return (*switch_)(t).get(bool()) ? (*link_on_)(t) : (*link_off_)(t);
 }
 
+LinkableValueNode::InvertibleStatus ValueNode_Switch::is_invertible(const Time &t, const ValueBase &target_value, int *link_index) const
+{
+	bool on = (*switch_)(t).get(bool());
+	if (ValueNode_Const::Handle::cast_dynamic( on ? link_on_ : link_off_))
+	{
+		if (link_index)
+			*link_index = get_link_index_from_name(on ? "link_on" : "link_off");
+		return INVERSE_OK;
+	}
 
+	return INVERSE_NOT_SUPPORTED;
+}
 
+ValueBase ValueNode_Switch::get_inverse(const Time &t, const ValueBase &target_value) const
+{
+	bool on = (*switch_)(t).get(bool());
+	if (ValueNode_Const::Handle::cast_dynamic( on ? link_on_ : link_off_))
+	{
+		return target_value;
+	}
+
+	throw std::runtime_error("Inverse not supported");
+}
 
 bool
 ValueNode_Switch::check_type(Type &type)
