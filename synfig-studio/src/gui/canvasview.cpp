@@ -829,7 +829,7 @@ CanvasView::create_time_bar()
 	timetrack->hide();
 
 	// Keyframe Mode widget
-	widget_keyframemode = manage(new Widget_KeyframeMode(KEYFRAMEMODE_NO_MOVE));
+	widget_keyframemode = manage(new Widget_KeyframeMode(KEYFRAMEMODE_MOVE_ONLY));
 	widget_keyframemode->set_tooltip_text(_("Waypoint handling when moving/deleting/copying keyframes"));
 	widget_keyframemode->set_popup_fixed_width(false);
 	widget_keyframemode->set_hexpand(false);
@@ -837,7 +837,7 @@ CanvasView::create_time_bar()
 	widget_keyframemode->signal_changed().connect(sigc::mem_fun(*this, &CanvasView::on_keyframemode_changed));
 
 	synfigapp::Main::signal_keyframemode_changed().connect(sigc::mem_fun(*this, &CanvasView::keyframemode_refresh));
-	synfigapp::Main::set_keyframemode(KEYFRAMEMODE_NO_MOVE); // set default
+	synfigapp::Main::set_keyframemode(KEYFRAMEMODE_MOVE_ONLY); // set default
 	keyframemode_refresh();
 
 	// Interpolation widget
@@ -849,7 +849,7 @@ CanvasView::create_time_bar()
 	widget_interpolation->signal_changed().connect(sigc::mem_fun(*this, &CanvasView::on_interpolation_changed));
 
 	synfigapp::Main::signal_interpolation_changed().connect(sigc::mem_fun(*this, &CanvasView::interpolation_refresh));
-	synfigapp::Main::set_interpolation(INTERPOLATION_CLAMPED); // Clamped by default.
+	synfigapp::Main::set_interpolation(INTERPOLATION_TCB); // TCB by default.
 	interpolation_refresh();
 
 	//Setup the Animation Mode Button and the Keyframe Lock button
@@ -943,6 +943,7 @@ CanvasView::create_time_bar()
 	keyframedial->set_margin_start(4);
 	keyframedial->set_margin_end(4);
 	keyframedial->show();
+	on_mode_changed(MODE_NORMAL);
 
 	//Adjust both widgets to be the same as the
 	int header_height = 0;
