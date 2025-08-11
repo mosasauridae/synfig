@@ -99,11 +99,13 @@ CanvasInterface::CanvasInterface(etl::loose_handle<Instance> instance,Canvas::Ha
 	instance_(instance),
 	canvas_(canvas),
 	cur_time_(canvas->rend_desc().get_frame_start()),
-	mode_(MODE_NORMAL|MODE_ANIMATE_PAST|MODE_ANIMATE_FUTURE),
+	mode_(MODE_NORMAL),
 	state_("")
 {
 	set_selection_manager(get_instance()->get_selection_manager());
 	set_ui_interface(get_instance()->get_ui_interface());
+
+	set_mode(Mode::MODE_NORMAL, false);
 }
 
 CanvasInterface::~CanvasInterface()
