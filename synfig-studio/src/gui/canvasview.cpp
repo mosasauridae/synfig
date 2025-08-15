@@ -3453,14 +3453,14 @@ CanvasView::on_preview_option()
 			if(!po)
 			{
 				po = Dialog_PreviewOptions::create();
-				po->set_fps(r.get_frame_rate()/2);
+				po->set_fps(r.get_frame_rate());
 				set_ext_widget("prevoptions",po);
 			}
 
 			if (!po->get_begin_override())
-				po->set_begintime(r.get_time_start());
+				po->set_begintime(time_model()->get_actual_play_bounds_lower());
 			if (!po->get_end_override())
-				po->set_endtime(r.get_time_end());
+				po->set_endtime(time_model()->get_actual_play_bounds_upper());
 
 			po->set_global_fps(r.get_frame_rate());
 			po->signal_finish().connect(sigc::mem_fun(*this, &CanvasView::on_preview_create));
