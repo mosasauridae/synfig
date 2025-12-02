@@ -71,6 +71,7 @@ ParamDesc::ParamDesc(const String& name)
 		add_enum_value(Color::BLEND_STRAIGHT,       "straight",     _("Straight"));
 		add_enum_value(Color::BLEND_ONTO,           "onto",         _("Onto"));
 		add_enum_value(Color::BLEND_STRAIGHT_ONTO,  "straightonto", _("Straight Onto"));
+        add_enum_value(Color::BLEND_SHADOW,         "shadow",       _("Shadow"));
 		add_enum_value(Color::BLEND_BEHIND,         "behind",       _("Behind"));
 		add_enum_value(Color::BLEND_SCREEN,         "screen",       _("Screen"));
 		add_enum_value(Color::BLEND_OVERLAY,        "overlay",      _("Overlay"));

@@ -237,6 +237,11 @@ Color::blend(Color a, Color b, float amount, Color::BlendMethod type)
 		blendfunc_ADD_COMPOSITE<Color>,
 		blendfunc_ALPHA<Color>,
 		blendfunc_ALPHA_INTERSECTION<Color>,
+        blendfunc_NULL<Color>,          // 25
+        blendfunc_NULL<Color>,
+        blendfunc_NULL<Color>,
+        blendfunc_NULL<Color>,
+        blendfunc_SHADOW<Color>,
 	};
 
 	return vtable[type](a,b,amount);
