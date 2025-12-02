@@ -40,6 +40,12 @@ namespace synfig {
 typedef Color (*blendfunc)(Color &,Color &,float);
 
 template <class C>
+C blendfunc_NULL(C&, C& b, float)
+{
+    return b;
+}
+
+template <class C>
 C blendfunc_COMPOSITE(C &src,C &dest,float amount)
 {
 	//c_dest'=c_src+(1.0-a_src)*c_dest
@@ -114,6 +120,34 @@ C blendfunc_STRAIGHT_ONTO(C &a,C &b,float amount)
 {
 	a.set_a(a.get_a()*b.get_a());
 	return blendfunc_STRAIGHT(a,b,amount);
+}
+
+template <class C>
+C blendfunc_SHADOW(C &a,C &b,float amount)
+{
+    // Color b = background color
+    // Color a = color to blend on b
+    if(amount<0) a=~a, amount=-amount;
+
+    amount*=a.get_a();
+
+    ColorReal r_mult = ((b.get_r()*a.get_r())-b.get_r())*(amount)+b.get_r();
+    ColorReal g_mult = ((b.get_g()*a.get_g())-b.get_g())*(amount)+b.get_g();
+    ColorReal b_mult = ((b.get_b()*a.get_b())-b.get_b())*(amount)+b.get_b();
+
+    ColorReal r_subt = b.get_r() - (1-a.get_r()) * amount;
+    ColorReal g_subt = b.get_g() - (1-a.get_g()) * amount;
+    ColorReal b_subt = b.get_b() - (1-a.get_b()) * amount;
+
+    float r_ratio = b.get_r();
+    float g_ratio = b.get_g();
+    float b_ratio = b.get_b();
+
+    b.set_r((r_subt * r_ratio) + (r_mult * (1-r_ratio)));
+    b.set_g((g_subt * g_ratio) + (g_mult * (1-g_ratio)));
+    b.set_b((b_subt * b_ratio) + (b_mult * (1-b_ratio)));
+
+    return b;
 }
 
 template <class C>
