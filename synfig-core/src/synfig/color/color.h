@@ -254,6 +254,7 @@ public:
 		BLEND_STRAIGHT=1,			//!< Straight linear interpolation from A->B (Alpha ignored)
 		BLEND_ONTO=13,				//!< Similar to BLEND_COMPOSITE, except that B's alpha is maintained
 		BLEND_STRAIGHT_ONTO=21,		//!< \deprecated \writeme
+        BLEND_SHADOW=29,            //!< Simple (B-(1-A))*A + (B*A)*(1-A)
 		BLEND_BEHIND=12,			//!< Similar to BLEND_COMPOSITE, except that B is composited onto A.
 		BLEND_SCREEN=16,			//!< \writeme
 		BLEND_OVERLAY=20,			//!< \writeme
@@ -277,7 +278,7 @@ public:
 		BLEND_ALPHA=23,				//!< multiply alphas
 		BLEND_ALPHA_INTERSECTION=24,//!< Alpha Over where layers overlaps, Composite otherwise
 
-		BLEND_END=25,				//!< \internal
+        BLEND_END=30,				//!< \internal
 		BLEND_BY_LAYER=999			//! Used to let the layer decides what Blend Method use by
 									//! default when the layer is created
 	};
