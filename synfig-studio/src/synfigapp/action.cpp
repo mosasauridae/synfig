@@ -145,6 +145,10 @@
 #include "actions/canvasadd.h"
 #include "actions/canvasremove.h"
 
+#include "actions/insertframes.h"
+#include "actions/removeframes.h"
+
+
 #include "actions/editmodeset.h"
 
 #include "actions/blinepointtangentmerge.h"
@@ -305,6 +309,10 @@ Action::Main::Main()
 	ADD_ACTION(Action::CanvasRendDescSet);
 	ADD_ACTION(Action::CanvasAdd);
 	ADD_ACTION(Action::CanvasRemove);
+
+    ADD_ACTION(Action::InsertFrames);
+    ADD_ACTION(Action::RemoveFrames);
+
 
 	ADD_ACTION(Action::EditModeSet);
 

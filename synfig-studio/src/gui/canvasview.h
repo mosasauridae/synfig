@@ -72,6 +72,8 @@
 #include "dialogs/canvasoptions.h"
 #include "dialogs/canvasproperties.h"
 #include "dialogs/canvasresize.h"
+#include "dialogs/dialog_insertframes.h"
+#include "dialogs/dialog_removeframes.h"
 #include "dialogs/dialog_keyframe.h"
 #include "dialogs/dialog_preview.h"
 #include "dialogs/dialog_waypoint.h"
@@ -415,6 +417,9 @@ public:
 	Dialog_Waypoint waypoint_dialog;
 	Dialog_Keyframe keyframe_dialog;
 	Dialog_Preview preview_dialog;
+    Dialog_InsertFrames insert_frames;
+    Dialog_RemoveFrames remove_frames;
+
 
 	/*
  -- ** -- P R I V A T E   M E T H O D S ---------------------------------------
@@ -669,7 +674,11 @@ protected:
 	bool on_layer_user_click(int, Gtk::TreeRow, LayerTree::ColumnID);
 	void on_mode_changed(synfigapp::CanvasInterface::Mode mode);
 	void on_waypoint_changed();
-	void on_waypoint_delete();
+    void on_waypoint_delete();
+    void show_insert_frames();
+    void show_remove_frames();
+    void on_insert_frames();
+    void on_remove_frames();
 	void on_refresh_pressed();
 	void on_id_changed();
 	void on_interface_time_changed();
