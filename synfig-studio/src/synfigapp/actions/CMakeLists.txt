@@ -79,6 +79,9 @@ target_sources(synfigapp
         "${CMAKE_CURRENT_LIST_DIR}/waypointconnect.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/waypointdisconnect.cpp"
 
+        "${CMAKE_CURRENT_LIST_DIR}/insertframes.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/removeframes.cpp"
+
         "${CMAKE_CURRENT_LIST_DIR}/timepointscopy.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/timepointsdelete.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/timepointsmove.cpp"

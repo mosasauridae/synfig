@@ -391,6 +391,14 @@
 					<attribute name="label" translatable="yes">_Resize...</attribute>
 					<attribute name="action">doc.resize-canvas</attribute>
 				</item>
+				<item>
+					<attribute name="label" translatable="yes">_Insert Frames...</attribute>
+					<attribute name="action">doc.insert-frames</attribute>
+				</item>
+				<item>
+					<attribute name="label" translatable="yes">Remo&ve Frames...</attribute>
+					<attribute name="action">doc.remove-frames</attribute>
+				</item>
 		</submenu>
 <!-- toolbox -->
 		<submenu id="menu-tools">
