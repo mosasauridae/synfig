@@ -1016,6 +1016,8 @@ DEFINE_ACTION("canvas-zoom-fit-2",  Gtk::StockID("gtk-zoom-fit"))
 DEFINE_ACTION("properties",     _("Properties..."))
 DEFINE_ACTION("options",        _("Options..."))
 DEFINE_ACTION("resize-canvas",  _("Resize..."))
+DEFINE_ACTION("insert-frames",  _("Insert Frames..."))
+DEFINE_ACTION("remove-frames",  _("Remove Frames..."))
 
 // actions in Layer menu
 DEFINE_ACTION("amount-inc", _("Increase Layer Amount"))
@@ -1161,6 +1163,9 @@ DEFINE_ACTION("switch-to-rightmost-tab",  _("Switch to Rightmost Tab"))
 "		<menuitem action='properties'/>"
 "		<menuitem action='options'/>"
 "		<menuitem action='resize-canvas'/>"
+"		<separator name='sep-canvas1'/>"
+"		<menuitem action='insert-frames'/>"
+"		<menuitem action='remove-frames'/>"
 "	</menu>"
 "	<menu action='menu-toolbox'>"
 "	</menu>"
