@@ -536,7 +536,9 @@ CanvasView::CanvasView(etl::loose_handle<studio::Instance> instance,etl::handle<
 	render_settings          (*App::main_window,canvas_interface_),
 	waypoint_dialog          (*App::main_window,canvas_interface_->get_canvas()),
 	keyframe_dialog          (*App::main_window,canvas_interface_),
-	preview_dialog           ()
+    preview_dialog           (),
+    insert_frames            (*App::main_window,canvas_interface_->get_canvas()),
+    remove_frames            (*App::main_window,canvas_interface_->get_canvas())
 {
 	// Make this toolbar small for space efficiency
 	get_style_context()->add_class("synfigstudio-efficient-workspace");
@@ -609,6 +611,9 @@ CanvasView::CanvasView(etl::loose_handle<studio::Instance> instance,etl::handle<
 	canvas_interface()->signal_rend_desc_changed().connect(sigc::mem_fun(*this,&CanvasView::refresh_rend_desc));
 	waypoint_dialog.signal_changed().connect(sigc::mem_fun(*this,&CanvasView::on_waypoint_changed));
 	waypoint_dialog.signal_delete().connect(sigc::mem_fun(*this,&CanvasView::on_waypoint_delete));
+
+    insert_frames.signal_edited().connect(sigc::mem_fun(*this,&CanvasView::on_insert_frames));
+    remove_frames.signal_edited().connect(sigc::mem_fun(*this,&CanvasView::on_remove_frames));
 
 	//MODIFIED TIME ADJUSTMENT STUFF....
 	time_model()->signal_time_changed().connect(
@@ -1420,8 +1425,10 @@ CanvasView::init_menus()
 
 		{"pause",               "animate_pause_icon",  N_("Pause"), "", sigc::mem_fun(*this, &CanvasView::stop_async) },
 		{"refresh",             "view-refresh",        N_("Refresh"), "", sigc::hide_return(sigc::bind(sigc::mem_fun(*this, &CanvasView::process_event_key), EVENT_REFRESH)) },
-		{"properties",          "document-properties", N_("Properties..."), "", sigc::mem_fun0(canvas_properties, &CanvasProperties::present) },
-		{"resize-canvas",       "",                    N_("Resize..."), "", sigc::mem_fun0(canvas_resize, &CanvasResize::present)},
+        {"properties",          "document-properties", N_("Properties..."), "", sigc::mem_fun0(canvas_properties, &CanvasProperties::present) },
+        {"resize-canvas",       "",                    N_("Resize..."), "", sigc::mem_fun0(canvas_resize, &CanvasResize::present)},
+        {"insert-frames",       "",                    N_("Insert Frames..."), "", sigc::mem_fun0(this, &CanvasView::show_insert_frames)},
+        {"remove-frames",       "",                    N_("Remove Frames..."), "", sigc::mem_fun0(this, &CanvasView::show_remove_frames)},
 
 		{"decrease-low-res-pixel-size", "", N_("Decrease Low-Res Pixel Size"), "", sigc::mem_fun(this, &CanvasView::decrease_low_res_pixel_size) },
 		{"increase-low-res-pixel-size", "", N_("Increase Low-Res Pixel Size"), "",  sigc::mem_fun(this, &CanvasView::increase_low_res_pixel_size) },
@@ -2863,14 +2870,52 @@ CanvasView::on_waypoint_changed()
 void
 CanvasView::on_waypoint_delete()
 {
-	Action::ParamList param_list;
-	param_list.add("canvas",get_canvas());
-	param_list.add("canvas_interface",canvas_interface());
+    Action::ParamList param_list;
+    param_list.add("canvas",get_canvas());
+    param_list.add("canvas_interface",canvas_interface());
 	param_list.add("value_node",waypoint_dialog.get_value_desc().get_value_node());
 	param_list.add("waypoint",waypoint_dialog.get_waypoint());
 //	param_list.add("time",canvas_interface()->get_time());
 
-	get_instance()->process_action("WaypointRemove", param_list);
+	get_instance()->process_action("WaypointRemove", param_list);    
+}
+
+void CanvasView::show_insert_frames()
+{
+    insert_frames.set_canvas(get_canvas());
+    insert_frames.set_time(get_canvas()->get_time());
+    insert_frames.present();
+}
+
+void CanvasView::show_remove_frames()
+{
+    remove_frames.set_canvas(get_canvas());
+    remove_frames.set_time(get_canvas()->get_time());
+    remove_frames.present();
+}
+
+void
+CanvasView::on_insert_frames()
+{
+    Action::ParamList param_list;
+    param_list.add("canvas",get_canvas());
+    param_list.add("canvas_interface",canvas_interface());
+    param_list.add("time",insert_frames.get_time());
+    param_list.add("duration",insert_frames.get_duration());
+
+    get_instance()->process_action("InsertFrames", param_list);
+}
+
+void
+CanvasView::on_remove_frames()
+{
+    Action::ParamList param_list;
+    param_list.add("canvas",get_canvas());
+    param_list.add("canvas_interface",canvas_interface());
+    param_list.add("time",remove_frames.get_time());
+    param_list.add("duration",remove_frames.get_duration());
+
+    get_instance()->process_action("RemoveFrames", param_list);
 }
 
 void
