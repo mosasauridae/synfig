@@ -104,9 +104,9 @@ WPListConverter::operator()(std::list<synfig::WidthPoint> &wp_out, const std::li
 	if (synfig::approximate_zero(distances[n-1])) {
 		norm_distances.push_back(0.);
 	} else {
-		int total_length = distances[n-1];
+        Real total_length = distances[n-1];
 		for(i=0;i<n;i++)
-			norm_distances.push_back(distances[i]/total_length);
+            norm_distances.push_back(distances[i]/total_length);
 	}
 	// Prepare the output
 	work_out.resize(n);
