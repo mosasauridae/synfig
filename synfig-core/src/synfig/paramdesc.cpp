@@ -92,5 +92,6 @@ ParamDesc::ParamDesc(const String& name)
 		add_enum_value(Color::BLEND_ALPHA_DARKEN,   "alphadarken",  _("Alpha Darken"));
 		add_enum_value(Color::BLEND_ALPHA,          "alpha",        _("Alpha"));
 		add_enum_value(Color::BLEND_ALPHA_INTERSECTION, "alphaintersection", _("Alpha Intersect"));
+        add_enum_value(Color::BLEND_ALPHA_MULTIPLY, "alphamultiply", _("Alpha Multiply"));
 	}
 }

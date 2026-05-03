@@ -453,6 +453,22 @@ C blendfunc_ALPHA_INTERSECTION(C& fg, C& bg, float amount)
 	return rm;
 }
 
+
+template <class C>
+C blendfunc_ALPHA_MULTIPLY(C &a,C &b,float amount)
+{
+    if(amount<0) a=~a, amount=-amount;
+
+    amount*=a.get_a();
+    b.set_r(((b.get_r()*a.get_r())-b.get_r())*(amount)+b.get_r());
+    b.set_g(((b.get_g()*a.get_g())-b.get_g())*(amount)+b.get_g());
+    b.set_b(((b.get_b()*a.get_b())-b.get_b())*(amount)+b.get_b());
+
+    b.set_a(a.get_a()*b.get_a());
+
+    return b;
+}
+
 } // synfig namespace
 
 

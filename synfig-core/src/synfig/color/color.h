@@ -277,6 +277,7 @@ public:
 		BLEND_ALPHA_OVER=19,		//!< \deprecated multiply alphas and then straight blends using the amount
 		BLEND_ALPHA=23,				//!< multiply alphas
 		BLEND_ALPHA_INTERSECTION=24,//!< Alpha Over where layers overlaps, Composite otherwise
+        BLEND_ALPHA_MULTIPLY=28,    //!< Multiply where layers overlap, Alpha otherwise
 
         BLEND_END=30,				//!< \internal
 		BLEND_BY_LAYER=999			//! Used to let the layer decides what Blend Method use by
@@ -300,12 +301,14 @@ public:
 			| (1 << BLEND_SCREEN)
 			| (1 << BLEND_OVERLAY)
 			| (1 << BLEND_HARD_LIGHT)
+            | (1 << BLEND_ALPHA_MULTIPLY)
 			| (1 << BLEND_ALPHA),
 
 		BLEND_METHODS_STRAIGHT = 0
 			| (1 << BLEND_STRAIGHT)
 			| (1 << BLEND_STRAIGHT_ONTO)
 			| (1 << BLEND_ALPHA_BRIGHTEN)
+            | (1 << BLEND_ALPHA_MULTIPLY)
 			| (1 << BLEND_ALPHA),
 
 		BLEND_METHODS_OVERWRITE_ON_ALPHA_ONE = 0
