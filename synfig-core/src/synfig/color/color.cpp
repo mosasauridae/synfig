@@ -240,7 +240,7 @@ Color::blend(Color a, Color b, float amount, Color::BlendMethod type)
         blendfunc_NULL<Color>,          // 25
         blendfunc_NULL<Color>,
         blendfunc_NULL<Color>,
-        blendfunc_NULL<Color>,
+        blendfunc_ALPHA_MULTIPLY<Color>,
         blendfunc_SHADOW<Color>,
 	};
 
