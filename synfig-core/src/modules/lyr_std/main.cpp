@@ -48,6 +48,7 @@
 #include "rotate.h"
 #include "clamp.h"
 #include "stretch.h"
+#include "dither.h"
 
 #include "supersample.h"
 
@@ -93,8 +94,9 @@ MODULE_INVENTORY_BEGIN(liblyr_std)
 		LAYER(Perspective)
 		LAYER(Julia)
 		LAYER(InsideOut)
-		LAYER(Mandelbrot)
-		LAYER(Layer_Clamp)
+        LAYER(Mandelbrot)
+        LAYER(Layer_Clamp)
+        LAYER(Layer_Dither)
 		LAYER(Layer_Stretch)
 		LAYER(XORPattern)		LAYER_ALIAS(XORPattern,"XORPattern")
 		LAYER(Twirl)

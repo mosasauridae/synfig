@@ -246,8 +246,9 @@ static const std::map<std::string, std::string> layer_icon_names = {
 	{"simple_circle",        "layer_example_simplecircle_icon"},
 	// Filter Layers
 	{"chromakey",    "layer_filter_chromakey_icon"},
-	{"clamp",        "layer_filter_clamp_icon"},
-	{"colorcorrect", "layer_filter_colorcorrect_icon"},
+    {"clamp",        "layer_filter_clamp_icon"},
+    {"colorcorrect", "layer_filter_colorcorrect_icon"},
+    {"dither",       "layer_filter_dither_icon"},
 	{"halftone2",    "layer_filter_halftone2_icon"},
 	{"halftone3",    "layer_filter_halftone3_icon"},
 	{"lumakey",      "layer_filter_lumakey_icon"},

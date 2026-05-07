@@ -169,7 +169,7 @@ synfig::render(
 					}
 				}
 			if(pool)
-				c/=pool;
+                c/=pool;
 		}
 
 		// Send the buffer to the render target.
