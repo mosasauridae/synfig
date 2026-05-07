@@ -3,6 +3,7 @@ add_library(lyr_std MODULE
         "${CMAKE_CURRENT_LIST_DIR}/booleancurve.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/clamp.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/curvewarp.cpp"
+		"${CMAKE_CURRENT_LIST_DIR}/dither.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/freetime.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/import.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/insideout.cpp"

@@ -141,6 +141,7 @@ set(ICONS
 	layer_filter_chromakey_icon
 	layer_filter_clamp_icon
 	layer_filter_colorcorrect_icon
+	layer_filter_dither_icon
 	layer_filter_halftone2_icon
 	layer_filter_halftone3_icon
 	layer_filter_lumakey_icon
