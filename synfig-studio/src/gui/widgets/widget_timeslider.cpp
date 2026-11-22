@@ -504,38 +504,38 @@ Widget_Timeslider::on_scroll_event(GdkEventScroll* event) //for zooming/moving t
 	const bool is_shift_pressed = event->state & GDK_SHIFT_MASK;
 
 	switch (event->direction) {
-		case GDK_SCROLL_UP:
-		case GDK_SCROLL_RIGHT:
-			// zooming
-			if (is_control_pressed) {
-				time_model->zoom(zoominfactor, zoom_time);
-			} else {
-				// modifies timeline-bar position, and scroll through the panel based on center
-				Time time_step = time_model->get_step_increment();
-				if (is_shift_pressed || App::get_time_format() != Time::Format::FORMAT_FRAMES)
-					time_step = step;
-				time_model->set_time(scroll_time + time_step);
-				if (scroll_time >= time_model->get_visible_center()) {
-					time_model->move_by(time_step);
-				}
-			}
-			return true;
-		case GDK_SCROLL_DOWN:
-		case GDK_SCROLL_LEFT:
-			if (is_control_pressed) {
-				time_model->zoom(zoomoutfactor, zoom_time);
-			} else {
-				Time time_step = time_model->get_step_increment();
-				if (is_shift_pressed || App::get_time_format() != Time::Format::FORMAT_FRAMES)
-					time_step = step;
-				time_model->set_time(scroll_time - time_step);
-				if (scroll_time <= time_model->get_visible_center()) {
-					time_model->move_by(-time_step);
-				}
-			}
-			return true;
-		default:
-			break;
+        case GDK_SCROLL_UP:
+        case GDK_SCROLL_RIGHT:
+            // zooming
+            if (!is_control_pressed && event->direction != GDK_SCROLL_RIGHT) {
+                time_model->zoom(zoominfactor, zoom_time);
+            } else {
+                // modifies timeline-bar position, and scroll through the panel based on center
+                Time time_step = time_model->get_step_increment();
+                if (is_shift_pressed || App::get_time_format() != Time::Format::FORMAT_FRAMES)
+                    time_step = step;
+                time_model->set_time(scroll_time + time_step);
+                if (scroll_time >= time_model->get_visible_center()) {
+                    time_model->move_by(time_step);
+                }
+            }
+            return true;
+        case GDK_SCROLL_DOWN:
+        case GDK_SCROLL_LEFT:
+            if (!is_control_pressed && event->direction != GDK_SCROLL_LEFT) {
+                time_model->zoom(zoomoutfactor, zoom_time);
+            } else {
+                Time time_step = time_model->get_step_increment();
+                if (is_shift_pressed || App::get_time_format() != Time::Format::FORMAT_FRAMES)
+                    time_step = step;
+                time_model->set_time(scroll_time - time_step);
+                if (scroll_time <= time_model->get_visible_center()) {
+                    time_model->move_by(-time_step);
+                }
+            }
+            return true;
+        default:
+            break;
 	}
 
 	return false;
